@@ -5,7 +5,6 @@ import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 from timer import Timer
 
 
-
 def reset():
     timer.stop()
     timer.reset()
@@ -31,9 +30,12 @@ def calculate_hours_minutes_seconds(miliseconds:float):
     seconds = int(miliseconds % 60)
     return hours, minutes, seconds
 
-timer_button_default_text: str = 'start timer'
-timer:Timer =Timer() 
 
+# global variables
+timer_button_default_text: str = 'start timer'
+
+# initialization
+timer:Timer =Timer() 
 
 # window setup
 root = tk.Tk()
@@ -65,16 +67,12 @@ total_time_label.pack(side='right',  padx = 10, pady = 10)
 
 
 
-
 # right frame
 frame_right = ttk.Frame(root)
 frame_right.pack(side='right', padx = 10, pady = 10)
 # session_time_button
-#session_time = tk.StringVar(value= 'hh:mm:ss')
-#session_time_button = ttk.Button(frame_right, textvariable = session_time, command = press_timer_button)
 session_time_button = ttk.Button(frame_right, text = timer_button_default_text , command = press_timer_button)
 session_time_button.pack(side='top', padx = 10, pady = 10)
-
 
 
 # reset_button
@@ -83,7 +81,3 @@ reset_button.pack(side='top', padx = 10, pady = 10)
 # save_button
 save_button = ttk.Button(frame_right, text = 'save')
 save_button.pack(side='top', padx = 10, pady = 10)
-# for item in session_time_button.keys():
-#     print(item,': ', session_time_button[item])
-
-root.mainloop() 

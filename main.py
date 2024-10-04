@@ -1,8 +1,8 @@
-import gui
+from gui import root
 
 
 def main():
-    print('hello World')
+    root.mainloop()
 
 
 if __name__ == "__main__":
