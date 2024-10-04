@@ -4,9 +4,7 @@ import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
 
-timer:Timer =Timer() 
 
-timer_button_default_text: str = 'start timer'
 
 def reset():
     timer.stop()
@@ -32,6 +30,10 @@ def calculate_hours_minutes_seconds(miliseconds:float):
     minutes = int((miliseconds % 3600) // 60)  # Get the remaining minutes after hours
     seconds = int(miliseconds % 60)
     return hours, minutes, seconds
+
+timer_button_default_text: str = 'start timer'
+timer:Timer =Timer() 
+
 
 # window setup
 root = tk.Tk()
