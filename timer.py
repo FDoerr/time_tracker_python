@@ -11,7 +11,7 @@ class Timer:
         print('initialized')
 
     def start(self):
-        self.start_time = time.time()
+        self.start_time = time.time() - self.elapsed_time
         self.running = True  
         print('start')      
 
@@ -20,7 +20,9 @@ class Timer:
         print('stop')
 
     def reset(self):
+        self.start_time = 0.0
         self.current_time = 0.0
+        self.elapsed_time = 0.0
         print('reset')
 
     def get_elapsed_time(self):
