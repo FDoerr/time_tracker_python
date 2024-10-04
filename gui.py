@@ -2,12 +2,15 @@ import tkinter as tk
 from tkinter import ttk
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
+
+
+
 # window setup
 root = tk.Tk()
 sv_ttk.use_dark_theme()
 root.title('time_tracker')
-root.geometry('400x150')
-root.minsize(width=400, height=150)
+root.geometry('400x200')
+root.minsize(width=400, height=200)
 
 
 # left frame
@@ -45,7 +48,9 @@ session_time_button.pack(side='top', padx = 10, pady = 10)
 # save_button
 save_button = ttk.Button(frame_right, text = 'save')
 save_button.pack(side='top', padx = 10, pady = 10)
-
+# reset_button
+reset_button = ttk.Button(frame_right, text = 'reset')
+reset_button.pack(side='top', padx = 10, pady = 10)
 
 # for item in session_time_button.keys():
 #     print(item,': ', session_time_button[item])
