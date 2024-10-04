@@ -24,12 +24,16 @@ def update_display():
         session_time_button.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
         root.after(500, update_display) #call function after 500ms, keeps UI Responsive
 
-def calculate_hours_minutes_seconds(miliseconds:float):
-    hours = int(miliseconds // 3600)  # 3600 seconds in an hour
-    minutes = int((miliseconds % 3600) // 60)  # Get the remaining minutes after hours
-    seconds = int(miliseconds % 60)
-    return hours, minutes, seconds
 
+def calculate_hours_minutes_seconds(miliseconds:float):
+    ms_in_h = 60*60*1000
+    ms_in_m =    60*1000
+    ms_in_s =       1000
+
+    hours   = int( miliseconds /  ms_in_h)  
+    minutes = int((miliseconds %  ms_in_h) / ms_in_m)  
+    seconds = int((miliseconds %  ms_in_m) / ms_in_s)
+    return hours, minutes, seconds
 
 # global variables
 timer_button_default_text: str = 'start timer'
