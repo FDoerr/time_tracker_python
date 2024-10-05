@@ -26,9 +26,9 @@ def update_display():
 
 
 def calculate_hours_minutes_seconds(miliseconds:float):
-    ms_in_h = 60*60*1000
-    ms_in_m =    60*1000
-    ms_in_s =       1000
+    ms_in_h = 3600000 # 60*60*1000
+    ms_in_m = 60000   # 60*1000
+    ms_in_s = 1000
 
     hours   = int( miliseconds /  ms_in_h)  
     minutes = int((miliseconds %  ms_in_h) / ms_in_m)  
@@ -85,3 +85,4 @@ reset_button.pack(side='top', padx = 10, pady = 10)
 # save_button
 save_button = ttk.Button(frame_right, text = 'save')
 save_button.pack(side='top', padx = 10, pady = 10)
+
