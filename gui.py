@@ -19,8 +19,7 @@ def press_timer_button():
 
 def update_display():
     if timer.running:
-        elapsed_time = timer.get_elapsed_time()
-        print('elasped time: ', elapsed_time)
+        elapsed_time = timer.get_elapsed_time()        
         hours, minutes, seconds = calculate_hours_minutes_seconds(elapsed_time)
         session_time_button.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
         root.after(500, update_display) #call function after 500ms, keeps UI Responsive
