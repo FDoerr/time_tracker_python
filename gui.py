@@ -4,7 +4,7 @@ import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
 
-
+#region Stopwatch button related functions
 def reset():
     timer.stop()
     timer.reset()
@@ -24,14 +24,12 @@ def update_display():
         session_time_button.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
         root.after(500, update_display) #call function after 500ms, keeps UI Responsive
 
-
-
 def calculate_hours_minutes_seconds(elapsed_time_in_s:int):
     hours   = int( elapsed_time_in_s / 3600)  
     minutes = int((elapsed_time_in_s % 3600) / 60)  
     seconds = int(elapsed_time_in_s  % 60)
     return hours, minutes, seconds
-    
+ #endregion
 
 # global variables
 timer_button_default_text: str = 'start timer'
