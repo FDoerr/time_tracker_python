@@ -20,20 +20,19 @@ def press_timer_button():
 def update_display():
     if timer.running:
         elapsed_time = timer.get_elapsed_time()
+        print('elasped time: ', elapsed_time)
         hours, minutes, seconds = calculate_hours_minutes_seconds(elapsed_time)
         session_time_button.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
         root.after(500, update_display) #call function after 500ms, keeps UI Responsive
 
 
-def calculate_hours_minutes_seconds(miliseconds:float):
-    ms_in_h = 3600000 # 60*60*1000
-    ms_in_m = 60000   # 60*1000
-    ms_in_s = 1000
 
-    hours   = int( miliseconds /  ms_in_h)  
-    minutes = int((miliseconds %  ms_in_h) / ms_in_m)  
-    seconds = int((miliseconds %  ms_in_m) / ms_in_s)
+def calculate_hours_minutes_seconds(elapsed_time_in_s:int):
+    hours   = int( elapsed_time_in_s / 3600)  
+    minutes = int((elapsed_time_in_s % 3600) / 60)  
+    seconds = int(elapsed_time_in_s  % 60)
     return hours, minutes, seconds
+    
 
 # global variables
 timer_button_default_text: str = 'start timer'
