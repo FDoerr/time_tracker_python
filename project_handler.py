@@ -82,6 +82,8 @@ sessions:
 '''
 
 import sqlite3 as sql3
+from datetime import datetime
+from typing import Literal
 
 connection: sql3.Connection = sql3.connect('time_tracker_data.db')
 cursor: sql3.Cursor = connection.cursor()
@@ -107,16 +109,20 @@ cmd_sessions_create:str = '''CREATE TABLE IF NOT EXISTS
 cmd_add_project:str = '''INSERT INTO projects
                           (project_name)
                           VALUES(?)
-                          ;''' #,(project_name)
+                          ;''' #,(project_name,)
 
 cmd_add_session:str = '''INSERT INTO sessions
                           ()
                           VALUES(?, ?, ?, ?)
-                          ;''' #,(data_tuple)
+                          ;''' #,(project_id, session_date, time_spent, task)
+
 
 cursor.execute(cmd_projects_create)
 cursor.execute(cmd_sessions_create)
-cursor.execute(cmd_add_project, 'Projekt 1')
-cursor.execute(cmd_add_project, 'Projekt 2')
-cursor.execute(cmd_add_project, 'Projekt 3')
+cursor.execute(cmd_add_project, ('Projekt 1',)) # ('Projekt 1',) isn't treated as a tuple without a comma
+cursor.execute(cmd_add_project, ('Projekt 2',))
+cursor.execute(cmd_add_project, ('Projekt 3',))
+cursor.execute(cmd_add_session, (int(1), str(datetime.now()), int(10000), str('Task 1')))
+connection.commit()
 cursor.close()
+connection.close()
