@@ -109,12 +109,12 @@ cmd_sessions_create:str = '''CREATE TABLE IF NOT EXISTS
 cmd_add_project:str = '''INSERT INTO projects
                           (project_name)
                           VALUES(?)
-                          ;''' #,(project_name,)
+                          ;''' #(project_name,) <-- comma needed when executing command otherwise it doesn't treat it as a tuple
 
 cmd_add_session:str = '''INSERT INTO sessions
                           (project_id, session_date, time_spent, task)
                           VALUES(?, ?, ?, ?)
-                          ;''' #,(project_id, session_date, time_spent, task)
+                          ;''' 
 
 
 cursor.execute(cmd_projects_create)
