@@ -112,7 +112,7 @@ cmd_add_project:str = '''INSERT INTO projects
                           ;''' #,(project_name,)
 
 cmd_add_session:str = '''INSERT INTO sessions
-                          ()
+                          (project_id, session_date, time_spent, task)
                           VALUES(?, ?, ?, ?)
                           ;''' #,(project_id, session_date, time_spent, task)
 
@@ -122,7 +122,7 @@ cursor.execute(cmd_sessions_create)
 cursor.execute(cmd_add_project, ('Projekt 1',)) # ('Projekt 1',) isn't treated as a tuple without a comma
 cursor.execute(cmd_add_project, ('Projekt 2',))
 cursor.execute(cmd_add_project, ('Projekt 3',))
-cursor.execute(cmd_add_session, (int(1), str(datetime.now()), int(10000), str('Task 1')))
+cursor.execute(cmd_add_session, (1, datetime.now(), 10000, 'Task 1'))
 connection.commit()
 cursor.close()
 connection.close()
