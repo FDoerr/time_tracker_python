@@ -106,13 +106,6 @@ cmd_sessions_create:str = '''CREATE TABLE IF NOT EXISTS
                           '''
 
 
-
-cmd_add_session:str = '''INSERT INTO sessions
-                          (project_id, session_date, time_spent, task)
-                          VALUES(?, ?, ?, ?)
-                          ;'''
-
-
 def add_project(project_name:str) -> None:
 
     cmd_add_project:str = '''
@@ -128,14 +121,18 @@ def add_project(project_name:str) -> None:
     cursor.close()
     connection.close()
 
+def add_sessions(project_id, session_date, time_spent, task) -> None:
 
+    cmd_add_session:str = '''
+                          INSERT INTO sessions
+                          (project_id, session_date, time_spent, task)
+                          VALUES(?, ?, ?, ?);
+                          '''
+    
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    cursor.execute(cmd_add_session, (project_id, session_date, time_spent, task))
+    connection.commit()
+    cursor.close()
+    connection.close()
 
-# connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-# cursor: sql3.Cursor = connection.cursor()
-# cursor.execute(cmd_projects_create)
-# cursor.execute(cmd_sessions_create)
-
-# cursor.execute(cmd_add_session, (1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 10000, 'Task 1'))
-# connection.commit()
-# cursor.close()
-# connection.close()
