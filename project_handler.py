@@ -83,7 +83,7 @@ sessions:
 
 import sqlite3 as sql3
 from datetime import datetime
-from typing import Literal
+
 
 connection: sql3.Connection = sql3.connect('time_tracker_data.db')
 cursor: sql3.Cursor = connection.cursor()
