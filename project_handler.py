@@ -85,20 +85,6 @@ import sqlite3 as sql3
 
 
 
-
-cmd_sessions_create:str = '''
-                          CREATE TABLE IF NOT EXISTS
-                          sessions(
-                                  session_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                  project_id INTEGER NOT NULL,
-                                  session_date TEXT NOT NULL,
-                                  time_spent INTEGER NOT NULL,
-                                  task TEXT,
-                                  FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
-                                  );
-                          '''
-
-
 def create_projects_table() -> None:
 
     cmd_create_projects_table:str = '''
@@ -112,6 +98,28 @@ def create_projects_table() -> None:
     connection: sql3.Connection = sql3.connect('time_tracker_data.db')
     cursor: sql3.Cursor = connection.cursor()
     cursor.execute(cmd_create_projects_table)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+
+def create_sessions_table() -> None:
+
+    cmd_create_sessions_table:str = '''
+                                    CREATE TABLE IF NOT EXISTS
+                                    sessions(
+                                            session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            project_id INTEGER NOT NULL,
+                                            session_date TEXT NOT NULL,
+                                            time_spent INTEGER NOT NULL,
+                                            task TEXT,
+                                            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
+                                            );
+                                    '''
+
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    cursor.execute(cmd_create_sessions_table)
     connection.commit()
     cursor.close()
     connection.close()
@@ -131,6 +139,7 @@ def add_project(project_name:str) -> None:
     connection.commit()
     cursor.close()
     connection.close()
+
 
 def add_sessions(project_id, session_date, time_spent, task) -> None:
 
