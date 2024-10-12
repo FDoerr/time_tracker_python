@@ -85,8 +85,7 @@ import sqlite3 as sql3
 from datetime import datetime
 
 
-connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-cursor: sql3.Cursor = connection.cursor()
+
 
 cmd_projects_create:str = '''CREATE TABLE IF NOT EXISTS
                               projects(
@@ -106,23 +105,37 @@ cmd_sessions_create:str = '''CREATE TABLE IF NOT EXISTS
                               );
                           '''
 
-cmd_add_project:str = '''INSERT INTO projects
-                          (project_name)
-                          VALUES(?)
-                          ;''' #(project_name,) <-- comma needed when executing command otherwise it doesn't treat it as a tuple
+
 
 cmd_add_session:str = '''INSERT INTO sessions
                           (project_id, session_date, time_spent, task)
                           VALUES(?, ?, ?, ?)
-                          ;''' 
+                          ;'''
 
 
-cursor.execute(cmd_projects_create)
-cursor.execute(cmd_sessions_create)
-cursor.execute(cmd_add_project, ('Projekt 1',)) # ('Projekt 1',) isn't treated as a tuple without a comma
-cursor.execute(cmd_add_project, ('Projekt 2',))
-cursor.execute(cmd_add_project, ('Projekt 3',))
-cursor.execute(cmd_add_session, (1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 10000, 'Task 1'))
-connection.commit()
-cursor.close()
-connection.close()
+def add_project(project_name:str) -> None:
+
+    cmd_add_project:str = '''
+                          INSERT INTO projects
+                          (project_name)
+                          VALUES(?);
+                          '''
+    
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    cursor.execute(cmd_add_project, (project_name,))  # comma needed so it is treated as a tuple for .execute()
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+
+
+# connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+# cursor: sql3.Cursor = connection.cursor()
+# cursor.execute(cmd_projects_create)
+# cursor.execute(cmd_sessions_create)
+
+# cursor.execute(cmd_add_session, (1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 10000, 'Task 1'))
+# connection.commit()
+# cursor.close()
+# connection.close()
