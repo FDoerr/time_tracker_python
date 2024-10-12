@@ -82,28 +82,39 @@ sessions:
 '''
 
 import sqlite3 as sql3
-from datetime import datetime
 
 
 
 
-cmd_projects_create:str = '''CREATE TABLE IF NOT EXISTS
-                              projects(
-                              project_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                              project_name TEXT NOT NULL
-                              );
+cmd_sessions_create:str = '''
+                          CREATE TABLE IF NOT EXISTS
+                          sessions(
+                                  session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                  project_id INTEGER NOT NULL,
+                                  session_date TEXT NOT NULL,
+                                  time_spent INTEGER NOT NULL,
+                                  task TEXT,
+                                  FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
+                                  );
                           '''
 
-cmd_sessions_create:str = '''CREATE TABLE IF NOT EXISTS
-                              sessions(
-                              session_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                              project_id INTEGER NOT NULL,
-                              session_date TEXT NOT NULL,
-                              time_spent INTEGER NOT NULL,
-                              task TEXT,
-                              FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
-                              );
-                          '''
+
+def create_projects_table() -> None:
+
+    cmd_create_projects_table:str = '''
+                                    CREATE TABLE IF NOT EXISTS
+                                    projects(
+                                            project_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            project_name TEXT NOT NULL
+                                            );
+                                    '''
+    
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    cursor.execute(cmd_create_projects_table)
+    connection.commit()
+    cursor.close()
+    connection.close()
 
 
 def add_project(project_name:str) -> None:
