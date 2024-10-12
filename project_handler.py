@@ -122,7 +122,7 @@ cursor.execute(cmd_sessions_create)
 cursor.execute(cmd_add_project, ('Projekt 1',)) # ('Projekt 1',) isn't treated as a tuple without a comma
 cursor.execute(cmd_add_project, ('Projekt 2',))
 cursor.execute(cmd_add_project, ('Projekt 3',))
-cursor.execute(cmd_add_session, (1, datetime.now(), 10000, 'Task 1'))
+cursor.execute(cmd_add_session, (1, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 10000, 'Task 1'))
 connection.commit()
 cursor.close()
 connection.close()
