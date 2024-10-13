@@ -30,9 +30,23 @@ Database:
 '''
 
 import sqlite3 as sql3
+from typing import Optional
 from datetime import datetime
 
+def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
 
+    connection: sql3.Connection = sql3.connect(db_path)
+    cursor: sql3.Cursor = connection.cursor()
+    
+    if data is None:
+        cursor.execute(cmd)
+    else:
+        cursor.execute(cmd, data)
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+ 
 def create_projects_table() -> None:
 
     cmd_create_projects_table:str = '''
@@ -43,12 +57,7 @@ def create_projects_table() -> None:
                                             );
                                     '''
     
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    cursor.execute(cmd_create_projects_table)
-    connection.commit()
-    cursor.close()
-    connection.close()
+    run_sql_command('time_tracker_data.db', cmd_create_projects_table)
 
 
 def create_sessions_table() -> None:
@@ -66,47 +75,32 @@ def create_sessions_table() -> None:
                                             );
                                     '''
 
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    cursor.execute(cmd_create_sessions_table)
-    connection.commit()
-    cursor.close()
-    connection.close()
+    run_sql_command('time_tracker_data.db', cmd_create_sessions_table)
 
 
 def create_tasks_table() -> None:
     cmd_create_tasks_table:str = '''
                                  CREATE TABLE IF NOT EXISTS
-                                    tasks(
-                                            task_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                            project_id INTEGER NOT NULL,
-                                            task_description TEXT,
-                                            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
-                                            );
+                                 tasks(
+                                      task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                      project_id INTEGER NOT NULL,
+                                      task_description TEXT,
+                                      FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
+                                      );
                                  '''
 
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    cursor.execute(cmd_create_tasks_table)
-    connection.commit()
-    cursor.close()
-    connection.close()
+    run_sql_command('time_tracker_data.db', cmd_create_tasks_table)
 
 
 def add_project(project_name:str) -> None:
 
     cmd_add_project:str = '''
                           INSERT INTO projects
-                          (project_name)
+                          (project_name) 
                           VALUES(?);
                           '''
     
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    cursor.execute(cmd_add_project, (project_name,))  # comma needed so it is treated as a tuple for .execute()
-    connection.commit()
-    cursor.close()
-    connection.close()
+    run_sql_command('time_tracker_data.db', cmd_add_project, (project_name,))
 
 
 def add_session(project_id:int, session_date:str, time_spent:int, task_id:int) -> None:
@@ -115,27 +109,18 @@ def add_session(project_id:int, session_date:str, time_spent:int, task_id:int) -
                           INSERT INTO sessions
                           (project_id, session_date, time_spent, task_id)
                           VALUES(?, ?, ?, ?);
-                          '''
-    
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    cursor.execute(cmd_add_session, (project_id, session_date, time_spent, task_id))
-    connection.commit()
-    cursor.close()
-    connection.close()
+                          '''    
+
+    run_sql_command('time_tracker_data.db', cmd_add_session, (project_id, session_date, time_spent, task_id))
+
 
 def add_task(project_id:int, task_description:str) -> None:
 
     cmd_add_task:str = '''
                        INSERT INTO tasks
                        (project_id, task_description)
-                       VALUES(?, ?)
+                       VALUES(?, ?);
                        '''
 
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    cursor.execute(cmd_add_task, (project_id, task_description))
-    connection.commit()
-    cursor.close()
-    connection.close()
+    run_sql_command('time_tracker_data.db', cmd_add_task, (project_id, task_description))
 
