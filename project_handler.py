@@ -14,7 +14,7 @@ Button:
 save time to currently active Project via Save button
 
 
-                                  
+Database:                                 
 +---------------------+           +-------------------+            
 |      projects       |           |      sessions     |            
 +---------------------+           +-------------------+            
@@ -27,34 +27,10 @@ save time to currently active Project via Save button
                           +----------------------------------------| project_id (FK)  |
                                                                    +------------------+
 
-
-
-projects:
-      project_id (PK)   INTEGER
-      project_name      TEXT
-
-sessions:
-      session_id(PK)    INTEGER
-      project_id(FK)    INTEGER
-      time_spent        INTEGER
-      date              TEXT
-      task              TEXT
-      
-+---------------------+           +-------------------+
-|      projects       |           |      sessions     |
-+---------------------+           +-------------------+
-| project_id (PK)     |<----------| session_id (PK)   | 
-| project_name        |           | project_id (FK)   |
-+---------------------+           | session_date      |
-                                  | time_spent        |
-                                  | task              |
-                                  +-------------------+
-
-
 '''
 
 import sqlite3 as sql3
-
+from datetime import datetime
 
 
 def create_projects_table() -> None:
@@ -84,8 +60,9 @@ def create_sessions_table() -> None:
                                             project_id INTEGER NOT NULL,
                                             session_date TEXT NOT NULL,
                                             time_spent INTEGER NOT NULL,
-                                            task TEXT,
+                                            task_id INTEGER,
                                             FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
+                                            FOREIGN KEY (task_id) REFERENCES tasks (task_id) ON DELETE CASCADE
                                             );
                                     '''
 
@@ -132,17 +109,17 @@ def add_project(project_name:str) -> None:
     connection.close()
 
 
-def add_session(project_id:int, session_date:str, time_spent:int, task) -> None:
+def add_session(project_id:int, session_date:str, time_spent:int, task_id:int) -> None:
 
     cmd_add_session:str = '''
                           INSERT INTO sessions
-                          (project_id, session_date, time_spent, task)
+                          (project_id, session_date, time_spent, task_id)
                           VALUES(?, ?, ?, ?);
                           '''
     
     connection: sql3.Connection = sql3.connect('time_tracker_data.db')
     cursor: sql3.Cursor = connection.cursor()
-    cursor.execute(cmd_add_session, (project_id, session_date, time_spent, task))
+    cursor.execute(cmd_add_session, (project_id, session_date, time_spent, task_id))
     connection.commit()
     cursor.close()
     connection.close()
