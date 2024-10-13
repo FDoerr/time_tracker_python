@@ -141,4 +141,21 @@ def add_task(project_id:int, task_description:str) -> None:
 
 #endregion
 
+#region query DB
 
+#TODO: query projects
+def get_projects():
+
+    cmd_get_projects:str ='''
+
+
+                          '''
+
+
+#TODO: query session data for specific project
+
+#TODO: query tasks for specific project
+
+
+
+#endregion
