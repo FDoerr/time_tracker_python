@@ -142,58 +142,52 @@ def add_task(project_id:int, task_description:str) -> None:
 #endregion
 
 #region query DB
-#TODO: refactor: add run_sql_query to reduce code redundancy
-def fetch_projects() -> list:
 
-    cmd_get_projects:str ='SELECT * FROM projects;'
+def run_sql_query(db_path:str, cmd:str, data:Optional[tuple] = None)  -> list[dict]:
 
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    
-    cursor.execute(cmd_get_projects)
-    projects: list = cursor.fetchall()
+    connection: sql3.Connection = sql3.connect(db_path)
+    connection.row_factory = sql3.Row
+    cursor: sql3.Cursor = connection.cursor()    
+
+    if data is None:
+        cursor.execute(cmd)
+    else:
+        cursor.execute(cmd, data)
+
+    results: list[dict] = [dict(row) for row in cursor.fetchall()]
 
     cursor.close()
     connection.close()
+    return results
 
+
+def fetch_projects() -> list[dict]:
+
+    cmd_get_projects:str ='SELECT * FROM projects;'
+
+    projects: list[dict] = run_sql_query('time_tracker_data.db', cmd_get_projects)
     return projects
 
 
-def fetch_sessions(project_id:int) -> list:
+def fetch_sessions(project_id:int) -> list[dict]:
 
     cmd_get_session:str = '''
                           SELECT * FROM sessions
                           WHERE project_id = ?;
                           '''
     
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    
-    cursor.execute(cmd_get_session, (project_id,))
-    sessions: list = cursor.fetchall()
-
-    cursor.close()
-    connection.close()
-
+    sessions: list[dict] = run_sql_query('time_tracker_data.db', cmd_get_session, (project_id,))
     return sessions
 
 
-def fetch_tasks(project_id:int) -> list:
+def fetch_tasks(project_id:int) -> list[dict]:
 
     cmd_get_tasks:str = '''
                           SELECT * FROM tasks
                           WHERE project_id = ?;
                           '''
     
-    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
-    cursor: sql3.Cursor = connection.cursor()
-    
-    cursor.execute(cmd_get_tasks, (project_id,))
-    tasks: list = cursor.fetchall()
-
-    cursor.close()
-    connection.close()
-
+    tasks: list[dict] = run_sql_query('time_tracker_data.db', cmd_get_tasks, (project_id,))
     return tasks
 
 
