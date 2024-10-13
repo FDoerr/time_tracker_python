@@ -97,6 +97,24 @@ def create_sessions_table() -> None:
     connection.close()
 
 
+def create_tasks_table() -> None:
+    cmd_create_tasks_table:str = '''
+                                 CREATE TABLE IF NOT EXISTS
+                                    tasks(
+                                            task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            project_id INTEGER NOT NULL,
+                                            task_description TEXT,
+                                            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
+                                            );
+                                 '''
+
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    cursor.execute(cmd_create_tasks_table)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
 
 def add_project(project_name:str) -> None:
 
@@ -114,7 +132,7 @@ def add_project(project_name:str) -> None:
     connection.close()
 
 
-def add_sessions(project_id, session_date, time_spent, task) -> None:
+def add_session(project_id:int, session_date:str, time_spent:int, task) -> None:
 
     cmd_add_session:str = '''
                           INSERT INTO sessions
@@ -125,6 +143,21 @@ def add_sessions(project_id, session_date, time_spent, task) -> None:
     connection: sql3.Connection = sql3.connect('time_tracker_data.db')
     cursor: sql3.Cursor = connection.cursor()
     cursor.execute(cmd_add_session, (project_id, session_date, time_spent, task))
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+def add_task(project_id:int, task_description:str) -> None:
+
+    cmd_add_task:str = '''
+                       INSERT INTO tasks
+                       (project_id, task_description)
+                       VALUES(?, ?)
+                       '''
+
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    cursor.execute(cmd_add_task, (project_id, task_description))
     connection.commit()
     cursor.close()
     connection.close()
