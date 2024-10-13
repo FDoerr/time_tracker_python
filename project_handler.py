@@ -52,8 +52,8 @@ def create_projects_table() -> None:
     cmd_create_projects_table:str = '''
                                     CREATE TABLE IF NOT EXISTS
                                     projects(
-                                            project_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                            project_name TEXT NOT NULL
+                                            project_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            project_name    TEXT NOT NULL
                                             );
                                     '''
     
@@ -65,13 +65,13 @@ def create_sessions_table() -> None:
     cmd_create_sessions_table:str = '''
                                     CREATE TABLE IF NOT EXISTS
                                     sessions(
-                                            session_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                            project_id INTEGER NOT NULL,
-                                            session_date TEXT NOT NULL,
-                                            time_spent INTEGER NOT NULL,
-                                            task_id INTEGER,
-                                            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
-                                            FOREIGN KEY (task_id) REFERENCES tasks (task_id) ON DELETE CASCADE
+                                            session_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            project_id      INTEGER NOT NULL,
+                                            session_date    TEXT    NOT NULL,
+                                            time_spent      INTEGER NOT NULL,
+                                            task_id         INTEGER,
+                                            FOREIGN KEY (project_id) REFERENCES projects (project_id)   ON DELETE CASCADE
+                                            FOREIGN KEY (task_id)    REFERENCES tasks (task_id)         ON DELETE CASCADE
                                             );
                                     '''
 
@@ -82,9 +82,9 @@ def create_tasks_table() -> None:
     cmd_create_tasks_table:str = '''
                                  CREATE TABLE IF NOT EXISTS
                                  tasks(
-                                      task_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                      project_id INTEGER NOT NULL,
-                                      task_description TEXT,
+                                      task_id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                                      project_id        INTEGER NOT NULL,
+                                      task_description  TEXT,
                                       FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
                                       );
                                  '''
@@ -95,8 +95,10 @@ def create_tasks_table() -> None:
 def add_project(project_name:str) -> None:
 
     cmd_add_project:str = '''
-                          INSERT INTO projects
-                          (project_name) 
+                          INSERT INTO
+                          projects(
+                                  project_name
+                                  ) 
                           VALUES(?);
                           '''
     
@@ -106,8 +108,13 @@ def add_project(project_name:str) -> None:
 def add_session(project_id:int, session_date:str, time_spent:int, task_id:int) -> None:
 
     cmd_add_session:str = '''
-                          INSERT INTO sessions
-                          (project_id, session_date, time_spent, task_id)
+                          INSERT INTO
+                          sessions(
+                                  project_id,
+                                  session_date,
+                                  time_spent,
+                                  task_id
+                                  )
                           VALUES(?, ?, ?, ?);
                           '''    
 
@@ -117,8 +124,11 @@ def add_session(project_id:int, session_date:str, time_spent:int, task_id:int) -
 def add_task(project_id:int, task_description:str) -> None:
 
     cmd_add_task:str = '''
-                       INSERT INTO tasks
-                       (project_id, task_description)
+                       INSERT INTO
+                       tasks(
+                            project_id,
+                            task_description
+                            )
                        VALUES(?, ?);
                        '''
 
