@@ -142,10 +142,10 @@ def add_task(project_id:int, task_description:str) -> None:
 #endregion
 
 #region query DB
-
+#TODO: refactor: add run_sql_query to reduce code redundancy
 def fetch_projects() -> list:
 
-    cmd_get_projects:str ='SELECT * FROM projects'
+    cmd_get_projects:str ='SELECT * FROM projects;'
 
     connection: sql3.Connection = sql3.connect('time_tracker_data.db')
     cursor: sql3.Cursor = connection.cursor()
@@ -155,16 +155,61 @@ def fetch_projects() -> list:
 
     cursor.close()
     connection.close()
+
     return projects
 
-#TODO: query session data for specific project
 
-#TODO: query tasks for specific project
+def fetch_sessions(project_id:int) -> list:
 
+    cmd_get_session:str = '''
+                          SELECT * FROM sessions
+                          WHERE project_id = ?;
+                          '''
+    
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    
+    cursor.execute(cmd_get_session, (project_id,))
+    sessions: list = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return sessions
+
+
+def fetch_tasks(project_id:int) -> list:
+
+    cmd_get_tasks:str = '''
+                          SELECT * FROM tasks
+                          WHERE project_id = ?;
+                          '''
+    
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    
+    cursor.execute(cmd_get_tasks, (project_id,))
+    tasks: list = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return tasks
 
 
 #endregion
+
+#TODO: functions changing data and removing entries
+
 if __name__== '__main__':
     projects = fetch_projects()
     for project in projects:
         print(project)
+
+    sessions = fetch_sessions(1)
+    for session in sessions:
+        print(session)
+
+    tasks = fetch_tasks(1)
+    for task in tasks:
+        print(task)
