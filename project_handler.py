@@ -31,7 +31,7 @@ Database:
 
 import sqlite3 as sql3
 from typing import Optional
-from datetime import datetime
+
 
 def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
 
@@ -46,7 +46,9 @@ def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
     connection.commit()
     cursor.close()
     connection.close()
- 
+
+
+#region create tables
 def create_projects_table() -> None:
 
     cmd_create_projects_table:str = '''
@@ -90,8 +92,11 @@ def create_tasks_table() -> None:
                                  '''
 
     run_sql_command('time_tracker_data.db', cmd_create_tasks_table)
+    
+#endregion 
 
 
+#region add to tables
 def add_project(project_name:str) -> None:
 
     cmd_add_project:str = '''
@@ -133,4 +138,7 @@ def add_task(project_id:int, task_description:str) -> None:
                        '''
 
     run_sql_command('time_tracker_data.db', cmd_add_task, (project_id, task_description))
+
+#endregion
+
 
