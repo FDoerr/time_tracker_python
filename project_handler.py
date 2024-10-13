@@ -30,7 +30,7 @@ Database:
 '''
 
 import sqlite3 as sql3
-from typing import Optional
+from typing import Any, Optional
 
 
 def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
@@ -143,14 +143,19 @@ def add_task(project_id:int, task_description:str) -> None:
 
 #region query DB
 
-#TODO: query projects
-def get_projects():
+def fetch_projects() -> list:
 
-    cmd_get_projects:str ='''
+    cmd_get_projects:str ='SELECT * FROM projects'
 
+    connection: sql3.Connection = sql3.connect('time_tracker_data.db')
+    cursor: sql3.Cursor = connection.cursor()
+    
+    cursor.execute(cmd_get_projects)
+    projects: list = cursor.fetchall()
 
-                          '''
-
+    cursor.close()
+    connection.close()
+    return projects
 
 #TODO: query session data for specific project
 
@@ -159,3 +164,7 @@ def get_projects():
 
 
 #endregion
+if __name__== '__main__':
+    projects = fetch_projects()
+    for project in projects:
+        print(project)
