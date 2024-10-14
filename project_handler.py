@@ -211,6 +211,7 @@ def del_project(project_id) -> None:
     run_sql_command('time_tracker_data.db', cmd_del_project, (project_id,))
 
 def del_task(task_id) -> None:
+
     cmd_del_task:str = '''
                           DELETE FROM tasks 
                           WHERE task_id=?
@@ -219,8 +220,14 @@ def del_task(task_id) -> None:
     run_sql_command('time_tracker_data.db', cmd_del_task, (task_id,))
 
 
-def del_session(session_id):
-    ...
+def del_session(session_id) -> None:
+
+    cmd_del_session:str = '''
+                          DELETE FROM sessions 
+                          WHERE session_id=?
+                          '''
+    
+    run_sql_command('time_tracker_data.db', cmd_del_session, (session_id,))
 
 #endregion
 
