@@ -141,6 +141,7 @@ def add_task(project_id:int, task_description:str) -> None:
 
 #endregion
 
+
 #region query DB
 
 def run_sql_query(db_path:str, cmd:str, data:Optional[tuple] = None)  -> list[dict]:
@@ -183,9 +184,9 @@ def fetch_sessions(project_id:int) -> list[dict]:
 def fetch_tasks(project_id:int) -> list[dict]:
 
     cmd_get_tasks:str = '''
-                          SELECT * FROM tasks
-                          WHERE project_id = ?;
-                          '''
+                        SELECT * FROM tasks
+                        WHERE project_id = ?;
+                        '''
     
     tasks: list[dict] = run_sql_query('time_tracker_data.db', cmd_get_tasks, (project_id,))
     return tasks
@@ -193,17 +194,31 @@ def fetch_tasks(project_id:int) -> list[dict]:
 
 #endregion
 
-#TODO: functions changing data and removing entries
+#region delete entries
+#TODO
+def del_project(project_id):
+    
+    cmd_del_project:str = '''
+                          DELETE FROM projects 
+                          WHERE project_id=?
+                          '''
+    
+    run_sql_command('time_tracker_data.db', cmd_del_project, (project_id,))
 
-if __name__== '__main__':
-    projects = fetch_projects()
-    for project in projects:
-        print(project)
+def del_task(task_id):
+    ...
 
-    sessions = fetch_sessions(1)
-    for session in sessions:
-        print(session)
 
-    tasks = fetch_tasks(1)
-    for task in tasks:
-        print(task)
+def del_session(session_id):
+    ...
+
+#endregion
+
+
+
+#region change entries
+#TODO
+
+#endregion
+if __name__=='__main__':
+    del_project(1)
