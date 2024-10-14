@@ -37,7 +37,10 @@ def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
 
     connection: sql3.Connection = sql3.connect(db_path)
     cursor: sql3.Cursor = connection.cursor()
-    
+
+    cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
+
+
     if data is None:
         cursor.execute(cmd)
     else:
@@ -149,6 +152,8 @@ def run_sql_query(db_path:str, cmd:str, data:Optional[tuple] = None)  -> list[di
     connection: sql3.Connection = sql3.connect(db_path)
     connection.row_factory = sql3.Row
     cursor: sql3.Cursor = connection.cursor()    
+
+    cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
 
     if data is None:
         cursor.execute(cmd)
