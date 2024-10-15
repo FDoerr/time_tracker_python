@@ -31,7 +31,7 @@ Database:
 
 import sqlite3 as sql3
 from typing import Any, Optional
-
+from datetime import datetime
 
 def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
 
@@ -239,4 +239,22 @@ def del_session(session_id) -> None:
 #endregion
 if __name__=='__main__':
     #del_project(1)
-    del_session(1)
+    #del_session(1)
+    create_projects_table()
+    create_sessions_table()
+    create_tasks_table()
+    add_project('Projekt 1')
+    add_project('Projekt 2')
+    add_project('Projekt 3')
+    add_task(1, 'Task 1')
+    add_task(1, 'Task 2')
+    add_task(2, 'Task 3')
+    add_task(2, 'Task 4')
+    add_task(3, 'Task 5')
+    #add_task(4, 'Task 6') ging nicht weil project 4 nicht exisitert 
+    add_session(1, str(datetime.now()), 1000, None)
+    add_session(1, str(datetime.now()), 2000, 1)
+    add_session(1, str(datetime.now()), 3000, 3) # geht obwohl sessions.project_id = 1 und tasks.project_id = 2
+    add_session(2, str(datetime.now()), 4000, 3)
+    #add_session(1, str(datetime.now()), 5000, 10) # ging nicht weil taks_id = 10 nicht exisitert
+    #add_session(10, str(datetime.now()), 5000, 1) # ging nicht weil project_id = 10 nicht existiert
