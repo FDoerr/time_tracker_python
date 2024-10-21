@@ -33,26 +33,11 @@ import sqlite3 as sql3
 from typing import Any, Optional
 from datetime import datetime
 
-# def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
-#     #TODO: add try except finally
-#     connection: sql3.Connection = sql3.connect(db_path)
-#     cursor: sql3.Cursor = connection.cursor()
-
-#     cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
-
-
-#     if data is None:
-#         cursor.execute(cmd)
-#     else:
-#         cursor.execute(cmd, data)
-
-#     connection.commit()
-#     cursor.close()
-#     connection.close()
+#region sql execution functions
 def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
 
     connection = None
-    cursor = None
+    cursor     = None
     
     try:
         connection: sql3.Connection = sql3.connect(db_path)
@@ -64,15 +49,51 @@ def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
             cursor.execute(cmd)
         else:
             cursor.execute(cmd, data)
+        
+        connection.commit()
 
     except sql3.IntegrityError as integrity_error:
         print(f'Integrity Error occured: {integrity_error}')
 
-    finally:
-        connection.commit()
-        cursor.close()
-        connection.close()
+    finally:        
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
+
+def run_sql_query(db_path:str, cmd:str, data:Optional[tuple] = None)  -> list[dict]:
+    
+    connection = None
+    cursor     = None
+    results    = []
+    
+    try:
+        connection: sql3.Connection = sql3.connect(db_path)
+        connection.row_factory = sql3.Row
+        cursor: sql3.Cursor = connection.cursor()    
+
+        cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
+
+        if data is None:
+            cursor.execute(cmd)
+        else:
+            cursor.execute(cmd, data)
+        results: list[dict] = [dict(row) for row in cursor.fetchall()]
+
+    except Exception as error:
+        print(f'Unexpected Error occured: {error}')
+
+    finally:        
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+    
+    return results
+
+
+#region create triggers
 def create_trigger_check_project_id_on_session_insert() -> None:
 
     cmd_create_trigger_check_project_id_on_session_insert:str = '''
@@ -90,6 +111,8 @@ def create_trigger_check_project_id_on_session_insert() -> None:
                                                                 '''
     
     run_sql_command('time_tracker_data.db', cmd_create_trigger_check_project_id_on_session_insert)
+#endregion
+
 
 #region create tables
 def create_projects_table() -> None:
@@ -188,26 +211,6 @@ def add_task(project_id:int, task_description:str) -> None:
 
 #region query DB
 
-def run_sql_query(db_path:str, cmd:str, data:Optional[tuple] = None)  -> list[dict]:
-    #TODO: add try except finally
-    connection: sql3.Connection = sql3.connect(db_path)
-    connection.row_factory = sql3.Row
-    cursor: sql3.Cursor = connection.cursor()    
-
-    cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
-
-    if data is None:
-        cursor.execute(cmd)
-    else:
-        cursor.execute(cmd, data)
-
-    results: list[dict] = [dict(row) for row in cursor.fetchall()]
-
-    cursor.close()
-    connection.close()
-    return results
-
-
 def fetch_projects() -> list[dict]:
 
     cmd_get_projects:str ='SELECT * FROM projects;'
@@ -241,7 +244,7 @@ def fetch_tasks(project_id:int) -> list[dict]:
 #endregion
 
 #region delete entries
-#TODO
+
 def del_project(project_id) -> None:
     
     cmd_del_project:str = '''
@@ -279,24 +282,27 @@ def del_session(session_id) -> None:
 
 #endregion
 if __name__=='__main__':
-    #del_project(1)
-    #del_session(1)
-    create_projects_table()
-    create_sessions_table()
-    create_tasks_table()
-    create_trigger_check_project_id_on_session_insert()
-    add_project('Projekt 1')
-    add_project('Projekt 2')
-    add_project('Projekt 3')
-    add_task(1, 'Task 1')
-    add_task(1, 'Task 2')
-    add_task(2, 'Task 3')
-    add_task(2, 'Task 4')
-    add_task(3, 'Task 5')
-    #add_task(4, 'Task 6') ging nicht weil project 4 nicht exisitert 
-    add_session(1, str(datetime.now()), 1000, None)
-    add_session(1, str(datetime.now()), 2000, 1)
-    add_session(1, str(datetime.now()), 3000, 3) # geht nicht mehr weil sessions.project_id = 1 und tasks.project_id = 2
-    add_session(2, str(datetime.now()), 4000, 3)
-    #add_session(1, str(datetime.now()), 5000, 10) # ging nicht weil taks_id = 10 nicht exisitert
-    #add_session(10, str(datetime.now()), 5000, 1) # ging nicht weil project_id = 10 nicht existiert
+    print(fetch_projects())
+    print(fetch_sessions(1))
+    print(fetch_tasks(1))
+    # #del_project(1)
+    # #del_session(1)
+    # create_projects_table()
+    # create_sessions_table()
+    # create_tasks_table()
+    # create_trigger_check_project_id_on_session_insert()
+    # add_project('Projekt 1')
+    # add_project('Projekt 2')
+    # add_project('Projekt 3')
+    # add_task(1, 'Task 1')
+    # add_task(1, 'Task 2')
+    # add_task(2, 'Task 3')
+    # add_task(2, 'Task 4')
+    # add_task(3, 'Task 5')
+    # #add_task(4, 'Task 6') ging nicht weil project 4 nicht exisitert 
+    # add_session(1, str(datetime.now()), 1000, None)
+    # add_session(1, str(datetime.now()), 2000, 1)
+    # add_session(1, str(datetime.now()), 3000, 3) # geht nicht mehr weil sessions.project_id = 1 und tasks.project_id = 2
+    # add_session(2, str(datetime.now()), 4000, 3)
+    # #add_session(1, str(datetime.now()), 5000, 10) # ging nicht weil taks_id = 10 nicht exisitert
+    # #add_session(10, str(datetime.now()), 5000, 1) # ging nicht weil project_id = 10 nicht existiert
