@@ -34,7 +34,7 @@ from typing import Any, Optional
 from datetime import datetime
 
 def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
-
+    #TODO: add try except finally
     connection: sql3.Connection = sql3.connect(db_path)
     cursor: sql3.Cursor = connection.cursor()
 
@@ -50,6 +50,23 @@ def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
     cursor.close()
     connection.close()
 
+def create_check_project_id_on_session_insert_trigger() -> None:
+
+    check_project_id_on_session_insert_trigger:str = '''
+                                                     CREATE TRIGGER IF NOT EXISTS
+                                                     id_trigger
+                                                     BEFORE INSERT ON sessions
+                                                     FOR EACH ROW
+                                                     WHEN NEW.task_id IS NOT NULL
+                                                     BEGIN
+                                                         SELECT CASE
+                                                             WHEN((SELECT project_id FROM tasks WHERE task_id = NEW.task_id) != NEW.project_id)
+                                                             THEN RAISE (ABORT, 'task does not belong to the same project_id as the session.')
+                                                         END;
+                                                     END;
+                                                     '''
+    
+    run_sql_command('time_tracker_data.db', check_project_id_on_session_insert_trigger)
 
 #region create tables
 def create_projects_table() -> None:
@@ -84,6 +101,7 @@ def create_sessions_table() -> None:
 
 
 def create_tasks_table() -> None:
+
     cmd_create_tasks_table:str = '''
                                  CREATE TABLE IF NOT EXISTS
                                  tasks(
@@ -148,7 +166,7 @@ def add_task(project_id:int, task_description:str) -> None:
 #region query DB
 
 def run_sql_query(db_path:str, cmd:str, data:Optional[tuple] = None)  -> list[dict]:
-
+    #TODO: add try except finally
     connection: sql3.Connection = sql3.connect(db_path)
     connection.row_factory = sql3.Row
     cursor: sql3.Cursor = connection.cursor()    
@@ -243,6 +261,7 @@ if __name__=='__main__':
     create_projects_table()
     create_sessions_table()
     create_tasks_table()
+    create_check_project_id_on_session_insert_trigger()
     add_project('Projekt 1')
     add_project('Projekt 2')
     add_project('Projekt 3')
@@ -254,7 +273,7 @@ if __name__=='__main__':
     #add_task(4, 'Task 6') ging nicht weil project 4 nicht exisitert 
     add_session(1, str(datetime.now()), 1000, None)
     add_session(1, str(datetime.now()), 2000, 1)
-    add_session(1, str(datetime.now()), 3000, 3) # geht obwohl sessions.project_id = 1 und tasks.project_id = 2
+    #add_session(1, str(datetime.now()), 3000, 3) # geht nicht mehr weil sessions.project_id = 1 und tasks.project_id = 2
     add_session(2, str(datetime.now()), 4000, 3)
     #add_session(1, str(datetime.now()), 5000, 10) # ging nicht weil taks_id = 10 nicht exisitert
     #add_session(10, str(datetime.now()), 5000, 1) # ging nicht weil project_id = 10 nicht existiert
