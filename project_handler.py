@@ -33,38 +33,61 @@ import sqlite3 as sql3
 from typing import Any, Optional
 from datetime import datetime
 
+# def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
+#     #TODO: add try except finally
+#     connection: sql3.Connection = sql3.connect(db_path)
+#     cursor: sql3.Cursor = connection.cursor()
+
+#     cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
+
+
+#     if data is None:
+#         cursor.execute(cmd)
+#     else:
+#         cursor.execute(cmd, data)
+
+#     connection.commit()
+#     cursor.close()
+#     connection.close()
 def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
-    #TODO: add try except finally
-    connection: sql3.Connection = sql3.connect(db_path)
-    cursor: sql3.Cursor = connection.cursor()
 
-    cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
+    connection = None
+    cursor = None
+    
+    try:
+        connection: sql3.Connection = sql3.connect(db_path)
+        cursor: sql3.Cursor = connection.cursor()
+    
+        cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
 
+        if data is None:
+            cursor.execute(cmd)
+        else:
+            cursor.execute(cmd, data)
 
-    if data is None:
-        cursor.execute(cmd)
-    else:
-        cursor.execute(cmd, data)
+    except sql3.IntegrityError as integrity_error:
+        print(f'Integrity Error occured: {integrity_error}')
 
-    connection.commit()
-    cursor.close()
-    connection.close()
+    finally:
+        connection.commit()
+        cursor.close()
+        connection.close()
 
 def create_trigger_check_project_id_on_session_insert() -> None:
 
     cmd_create_trigger_check_project_id_on_session_insert:str = '''
-                                                         CREATE TRIGGER IF NOT EXISTS
-                                                         id_trigger
-                                                         BEFORE INSERT ON sessions
-                                                         FOR EACH ROW
-                                                         WHEN NEW.task_id IS NOT NULL
-                                                         BEGIN
-                                                             SELECT CASE
-                                                                 WHEN((SELECT project_id FROM tasks WHERE task_id = NEW.task_id) != NEW.project_id)
-                                                                 THEN RAISE (ABORT, 'task does not belong to the same project_id as the session.')
-                                                             END;
-                                                         END;
-                                                         '''
+                                                                CREATE TRIGGER IF NOT EXISTS
+                                                                id_trigger
+                                                                BEFORE INSERT ON sessions
+                                                                FOR EACH ROW
+                                                                WHEN NEW.task_id IS NOT NULL
+                                                                BEGIN
+                                                                    SELECT CASE
+                                                                        WHEN((SELECT project_id FROM tasks WHERE task_id = NEW.task_id) != NEW.project_id)
+                                                                        THEN RAISE (ABORT, 'task does not belong to the same project_id as the session.')
+                                                                    END;
+                                                                END;
+                                                                '''
     
     run_sql_command('time_tracker_data.db', cmd_create_trigger_check_project_id_on_session_insert)
 
@@ -261,7 +284,7 @@ if __name__=='__main__':
     create_projects_table()
     create_sessions_table()
     create_tasks_table()
-    create_check_project_id_on_session_insert_trigger()
+    create_trigger_check_project_id_on_session_insert()
     add_project('Projekt 1')
     add_project('Projekt 2')
     add_project('Projekt 3')
@@ -273,7 +296,7 @@ if __name__=='__main__':
     #add_task(4, 'Task 6') ging nicht weil project 4 nicht exisitert 
     add_session(1, str(datetime.now()), 1000, None)
     add_session(1, str(datetime.now()), 2000, 1)
-    #add_session(1, str(datetime.now()), 3000, 3) # geht nicht mehr weil sessions.project_id = 1 und tasks.project_id = 2
+    add_session(1, str(datetime.now()), 3000, 3) # geht nicht mehr weil sessions.project_id = 1 und tasks.project_id = 2
     add_session(2, str(datetime.now()), 4000, 3)
     #add_session(1, str(datetime.now()), 5000, 10) # ging nicht weil taks_id = 10 nicht exisitert
     #add_session(10, str(datetime.now()), 5000, 1) # ging nicht weil project_id = 10 nicht existiert
