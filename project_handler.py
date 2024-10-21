@@ -50,23 +50,23 @@ def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
     cursor.close()
     connection.close()
 
-def create_check_project_id_on_session_insert_trigger() -> None:
+def create_trigger_check_project_id_on_session_insert() -> None:
 
-    check_project_id_on_session_insert_trigger:str = '''
-                                                     CREATE TRIGGER IF NOT EXISTS
-                                                     id_trigger
-                                                     BEFORE INSERT ON sessions
-                                                     FOR EACH ROW
-                                                     WHEN NEW.task_id IS NOT NULL
-                                                     BEGIN
-                                                         SELECT CASE
-                                                             WHEN((SELECT project_id FROM tasks WHERE task_id = NEW.task_id) != NEW.project_id)
-                                                             THEN RAISE (ABORT, 'task does not belong to the same project_id as the session.')
+    cmd_create_trigger_check_project_id_on_session_insert:str = '''
+                                                         CREATE TRIGGER IF NOT EXISTS
+                                                         id_trigger
+                                                         BEFORE INSERT ON sessions
+                                                         FOR EACH ROW
+                                                         WHEN NEW.task_id IS NOT NULL
+                                                         BEGIN
+                                                             SELECT CASE
+                                                                 WHEN((SELECT project_id FROM tasks WHERE task_id = NEW.task_id) != NEW.project_id)
+                                                                 THEN RAISE (ABORT, 'task does not belong to the same project_id as the session.')
+                                                             END;
                                                          END;
-                                                     END;
-                                                     '''
+                                                         '''
     
-    run_sql_command('time_tracker_data.db', check_project_id_on_session_insert_trigger)
+    run_sql_command('time_tracker_data.db', cmd_create_trigger_check_project_id_on_session_insert)
 
 #region create tables
 def create_projects_table() -> None:
