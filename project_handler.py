@@ -31,11 +31,10 @@ Database:
 #TODO: Refactor everything to use f-strings, this also means run_sql_command/query won't need the data tuples anymore
 #TODO: modularize this Script
 import sqlite3 as sql3
-from typing import Any, Never, Optional
 from datetime import datetime
 
 #region sql execution functions
-def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
+def run_sql_command(db_path:str, cmd:str, data:tuple|None = None) -> None:
 
     connection = None
     cursor     = None
@@ -67,7 +66,7 @@ def run_sql_command(db_path:str, cmd:str, data:Optional[tuple] = None) -> None:
             connection.close()
 
 
-def run_sql_query(db_path:str, cmd:str, data:Optional[tuple] = None)  -> list[dict]:
+def run_sql_query(db_path:str, cmd:str, data:tuple|None = None)  -> list[dict]:
     
     connection = None
     cursor     = None
@@ -167,6 +166,7 @@ def create_trigger_check_project_id_on_session_insert() -> None:
                                                                 '''
     
     run_sql_command('time_tracker_data.db', cmd_create_trigger_check_project_id_on_session_insert)
+
 #endregion
 
 
@@ -299,10 +299,10 @@ def update_project(new_project_name:str, project_id:int) -> None:
 
 
 def update_session(session_id:      int,
-                   new_project_id:  Optional[int] = None,
-                   new_session_date:Optional[str] = None,
-                   new_time_spent:  Optional[int] = None,
-                   new_task_id:     Optional[int] = None) -> None:
+                   new_project_id:  int|None = None,
+                   new_session_date:str|None = None,
+                   new_time_spent:  int|None = None,
+                   new_task_id:     int|None = None) -> None:
 
     building_blocks_cmd:list[str] = []
     cmd_update_session = '''
@@ -332,7 +332,7 @@ def update_session(session_id:      int,
     run_sql_command('time_tracker_data.db', cmd_update_session)
 
 
-def update_task(task_id:int, new_project_id:Optional[int] = None , new_task_description:Optional[str] = None) -> None:
+def update_task(task_id:int, new_project_id:int|None = None , new_task_description:str|None = None) -> None:
     
     building_blocks_cmd:list[str] = []
 
@@ -368,6 +368,7 @@ def update_task_description(task_id:int, new_task_description:str) -> None:
     run_sql_command('time_tracker_data.db', cmd_update_task_description, (new_task_description, task_id))
 
 #endregion
+
 
 #region if __name__=='__main__':
 if __name__=='__main__':
