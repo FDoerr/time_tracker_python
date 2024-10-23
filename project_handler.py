@@ -31,10 +31,15 @@ Database:
 #TODO: Refactor everything to use f-strings for better readability, this also means run_sql_command/query won't need the data tuples anymore
 #TODO: modularize this Script
 import sqlite3 as sql3
-from datetime import datetime
+
+default_db:str = 'time_tracker_data.db'
 
 #region sql execution functions
-def run_sql_command(db_path:str, cmd:str, data:tuple|None = None) -> None:
+
+def run_sql_command(cmd:str,
+                    data:tuple|None = None,
+                    db_path:str     = default_db
+                   ) -> None:
 
     connection:sql3.Connection|None = None
     cursor:sql3.Cursor|None         = None
@@ -66,7 +71,10 @@ def run_sql_command(db_path:str, cmd:str, data:tuple|None = None) -> None:
             connection.close()
 
 
-def run_sql_query(db_path:str, cmd:str, data:tuple|None = None)  -> list[dict]:
+def run_sql_query(cmd:str,
+                  data:tuple|None = None,
+                  db_path:str     = default_db
+                 ) -> list[dict]:
     
     connection:sql3.Connection|None = None
     cursor:sql3.Cursor|None         = None
@@ -110,7 +118,7 @@ def create_projects_table() -> None:
                                             );
                                     '''
     
-    run_sql_command('time_tracker_data.db', cmd_create_projects_table)
+    run_sql_command(cmd_create_projects_table)
 
 
 def create_sessions_table() -> None:
@@ -128,7 +136,7 @@ def create_sessions_table() -> None:
                                             );
                                     '''
 
-    run_sql_command('time_tracker_data.db', cmd_create_sessions_table)
+    run_sql_command(cmd_create_sessions_table)
 
 
 def create_tasks_table() -> None:
@@ -143,7 +151,7 @@ def create_tasks_table() -> None:
                                       );
                                  '''
 
-    run_sql_command('time_tracker_data.db', cmd_create_tasks_table)
+    run_sql_command(cmd_create_tasks_table)
     
 #endregion
 
@@ -166,7 +174,7 @@ def create_trigger_check_project_id_on_session_insert() -> None:
                                                                 END;
                                                                 '''
     
-    run_sql_command('time_tracker_data.db', cmd_create_trigger_check_project_id_on_session_insert)
+    run_sql_command(cmd_create_trigger_check_project_id_on_session_insert)
 
 
 def create_trigger_check_project_id_on_session_update() -> None:
@@ -185,7 +193,7 @@ def create_trigger_check_project_id_on_session_update() -> None:
                                                                 END;
                                                                 '''
     
-    run_sql_command('time_tracker_data.db', cmd_create_trigger_check_project_id_on_session_update)
+    run_sql_command(cmd_create_trigger_check_project_id_on_session_update)
 
 #endregion
 
@@ -201,7 +209,7 @@ def add_project(project_name:str) -> None:
                           VALUES(?);
                           '''
     
-    run_sql_command('time_tracker_data.db', cmd_add_project, (project_name,))
+    run_sql_command(cmd_add_project, (project_name,))
 
 
 def add_session(project_id:int, session_date:str, time_spent:int, task_id:int) -> None:
@@ -217,7 +225,7 @@ def add_session(project_id:int, session_date:str, time_spent:int, task_id:int) -
                           VALUES(?, ?, ?, ?);
                           '''    
 
-    run_sql_command('time_tracker_data.db', cmd_add_session, (project_id, session_date, time_spent, task_id))
+    run_sql_command(cmd_add_session, (project_id, session_date, time_spent, task_id))
 
 
 def add_task(project_id:int, task_description:str) -> None:
@@ -231,7 +239,7 @@ def add_task(project_id:int, task_description:str) -> None:
                        VALUES(?, ?);
                        '''
 
-    run_sql_command('time_tracker_data.db', cmd_add_task, (project_id, task_description))
+    run_sql_command(cmd_add_task, (project_id, task_description))
 
 #endregion
 
@@ -242,7 +250,7 @@ def fetch_projects() -> list[dict]:
 
     cmd_get_projects:str ='SELECT * FROM projects;'
 
-    projects: list[dict] = run_sql_query('time_tracker_data.db', cmd_get_projects)
+    projects: list[dict] = run_sql_query(cmd_get_projects)
     return projects
 
 
@@ -253,7 +261,7 @@ def fetch_sessions(project_id:int) -> list[dict]:
                           WHERE project_id = ?;
                           '''
     
-    sessions: list[dict] = run_sql_query('time_tracker_data.db', cmd_get_session, (project_id,))
+    sessions: list[dict] = run_sql_query(cmd_get_session, (project_id,))
     return sessions
 
 
@@ -264,7 +272,7 @@ def fetch_tasks(project_id:int) -> list[dict]:
                         WHERE project_id = ?;
                         '''
     
-    tasks: list[dict] = run_sql_query('time_tracker_data.db', cmd_get_tasks, (project_id,))
+    tasks: list[dict] = run_sql_query(cmd_get_tasks, (project_id,))
     return tasks
 
 
@@ -279,7 +287,7 @@ def del_project(project_id:int) -> None:
                           WHERE project_id = ?;
                           '''
     
-    run_sql_command('time_tracker_data.db', cmd_del_project, (project_id,))
+    run_sql_command(cmd_del_project, (project_id,))
 
 
 def del_task(task_id:int) -> None:
@@ -289,7 +297,7 @@ def del_task(task_id:int) -> None:
                        WHERE task_id = ?;
                        '''
     
-    run_sql_command('time_tracker_data.db', cmd_del_task, (task_id,))
+    run_sql_command(cmd_del_task, (task_id,))
 
 
 def del_session(session_id:int) -> None:
@@ -299,7 +307,7 @@ def del_session(session_id:int) -> None:
                           WHERE session_id = ?;
                           '''
     
-    run_sql_command('time_tracker_data.db', cmd_del_session, (session_id,))
+    run_sql_command(cmd_del_session, (session_id,))
 
 #endregion
 
@@ -315,7 +323,7 @@ def update_project(new_project_name:str, project_id:int) -> None:
                              WHERE project_id = ?;
                              '''
     
-    run_sql_command('time_tracker_data.db', cmd_update_project, (new_project_name, project_id))
+    run_sql_command(cmd_update_project, (new_project_name, project_id))
 
 
 def update_session(session_id:      int,
@@ -326,9 +334,9 @@ def update_session(session_id:      int,
 
     building_blocks_cmd:list[str] = []
     cmd_update_session = '''
-                      UPDATE sessions
-                      SET
-                      '''
+                         UPDATE sessions
+                         SET
+                         '''
     
     if new_project_id is not None:
         building_blocks_cmd.append(f' project_id = {new_project_id}')        
@@ -349,7 +357,7 @@ def update_session(session_id:      int,
     cmd_update_session += ','.join(building_blocks_cmd)
     cmd_update_session += f' WHERE session_id = {session_id};'    
     
-    run_sql_command('time_tracker_data.db', cmd_update_session)
+    run_sql_command(cmd_update_session)
 
 
 def update_task(task_id:int, new_project_id:int|None = None , new_task_description:str|None = None) -> None:
@@ -374,7 +382,7 @@ def update_task(task_id:int, new_project_id:int|None = None , new_task_descripti
     cmd_update_task += ','.join(building_blocks_cmd)
     cmd_update_task += f' WHERE task_id = {task_id};'    
     
-    run_sql_command('time_tracker_data.db', cmd_update_task)
+    run_sql_command(cmd_update_task)
 
     
 def update_task_description(task_id:int, new_task_description:str) -> None:
@@ -385,14 +393,14 @@ def update_task_description(task_id:int, new_task_description:str) -> None:
                                   WHERE task_id = ?;
                                   '''
     
-    run_sql_command('time_tracker_data.db', cmd_update_task_description, (new_task_description, task_id))
+    run_sql_command(cmd_update_task_description, (new_task_description, task_id))
 
 #endregion
 
 
 #region if __name__=='__main__':
 if __name__=='__main__':
-    print(f'{__file__} is running directly.')
+    print(f'Runs directly: {__file__}')
     # print(fetch_projects())
     # print(fetch_sessions(1))
     # print(fetch_tasks(1))
