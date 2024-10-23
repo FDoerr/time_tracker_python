@@ -28,7 +28,7 @@ Database:
                                                                    +------------------+
 
 '''
-#TODO: Refactor everything to use f-strings, this also means run_sql_command/query won't need the data tuples anymore
+#TODO: Refactor everything to use f-strings for better readability, this also means run_sql_command/query won't need the data tuples anymore
 #TODO: modularize this Script
 import sqlite3 as sql3
 from datetime import datetime
@@ -36,12 +36,12 @@ from datetime import datetime
 #region sql execution functions
 def run_sql_command(db_path:str, cmd:str, data:tuple|None = None) -> None:
 
-    connection = None
-    cursor     = None
+    connection:sql3.Connection|None = None
+    cursor:sql3.Cursor|None         = None
     
     try:
-        connection: sql3.Connection = sql3.connect(db_path)
-        cursor: sql3.Cursor = connection.cursor()
+        connection = sql3.connect(db_path)
+        cursor = connection.cursor()    
     
         cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
 
@@ -68,14 +68,14 @@ def run_sql_command(db_path:str, cmd:str, data:tuple|None = None) -> None:
 
 def run_sql_query(db_path:str, cmd:str, data:tuple|None = None)  -> list[dict]:
     
-    connection = None
-    cursor     = None
-    results    = []
+    connection:sql3.Connection|None = None
+    cursor:sql3.Cursor|None         = None
+    results = []
     
     try:
-        connection: sql3.Connection = sql3.connect(db_path)
-        connection.row_factory = sql3.Row
-        cursor: sql3.Cursor = connection.cursor()    
+        connection = sql3.connect(db_path)
+        connection.row_factory = sql3.Row # Set row factory to return rows as dictionaries
+        cursor = connection.cursor()    
 
         cursor.execute("PRAGMA foreign_keys = ON;") # enables foreign key restrictions
 
@@ -83,6 +83,7 @@ def run_sql_query(db_path:str, cmd:str, data:tuple|None = None)  -> list[dict]:
             cursor.execute(cmd)
         else:
             cursor.execute(cmd, data)
+
         results: list[dict] = [dict(row) for row in cursor.fetchall()]
 
     except Exception as error:
@@ -96,6 +97,7 @@ def run_sql_query(db_path:str, cmd:str, data:tuple|None = None)  -> list[dict]:
     
     return results
 #endregion
+
 
 #region create tables
 def create_projects_table() -> None:
@@ -153,19 +155,38 @@ def create_trigger_check_project_id_on_session_insert() -> None:
 
     cmd_create_trigger_check_project_id_on_session_insert:str = '''
                                                                 CREATE TRIGGER IF NOT EXISTS
-                                                                id_trigger
+                                                                id_insert_trigger
                                                                 BEFORE INSERT ON sessions
                                                                 FOR EACH ROW
                                                                 WHEN NEW.task_id IS NOT NULL
                                                                 BEGIN
                                                                     SELECT CASE
                                                                         WHEN((SELECT project_id FROM tasks WHERE task_id = NEW.task_id) != NEW.project_id)
-                                                                        THEN RAISE (ABORT, 'task does not belong to the same project_id as the session.')
+                                                                        THEN RAISE (ABORT, 'Task does not belong to the same project_id as the session.')
                                                                     END;
                                                                 END;
                                                                 '''
     
     run_sql_command('time_tracker_data.db', cmd_create_trigger_check_project_id_on_session_insert)
+
+
+def create_trigger_check_project_id_on_session_update() -> None:
+
+    cmd_create_trigger_check_project_id_on_session_update:str = '''
+                                                                CREATE TRIGGER IF NOT EXISTS
+                                                                id_update_trigger
+                                                                BEFORE UPDATE ON sessions
+                                                                FOR EACH ROW
+                                                                WHEN NEW.task_id IS NOT NULL
+                                                                BEGIN
+                                                                    SELECT CASE
+                                                                        WHEN((SELECT project_id FROM tasks WHERE task_id = NEW.task_id) != NEW.project_id)
+                                                                        THEN RAISE (ABORT, 'Task does not belong to the same project_id as the session.')
+                                                                    END;
+                                                                END;
+                                                                '''
+    
+    run_sql_command('time_tracker_data.db', cmd_create_trigger_check_project_id_on_session_update)
 
 #endregion
 
@@ -372,12 +393,14 @@ def update_task_description(task_id:int, new_task_description:str) -> None:
 
 #region if __name__=='__main__':
 if __name__=='__main__':
-    print(fetch_projects())
-    print(fetch_sessions(1))
-    print(fetch_tasks(1))
-    update_project('Project_name changed', 1)
-    update_task(1, 1)
-    update_session(2, 2, 'new date', 666, 1)
+    
+    # print(fetch_projects())
+    # print(fetch_sessions(1))
+    # print(fetch_tasks(1))
+    # update_project('Project_name changed', 1)
+    # update_task(1, 1)
+    # update_session(2, 2, 'new date', 666, 1)
+    #update_session(1, new_task_id=5)  
     #update_task(3, new_project_id = 2)
     #update_task(1, 2, 'test')    
     #update_task(2, new_task_description='test')   
@@ -388,6 +411,7 @@ if __name__=='__main__':
     # create_sessions_table()
     # create_tasks_table()
     # create_trigger_check_project_id_on_session_insert()
+    #create_trigger_check_project_id_on_session_update()
     # add_project('Projekt 1')
     # add_project('Projekt 2')
     # add_project('Projekt 3')
