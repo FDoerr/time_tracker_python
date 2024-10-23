@@ -3,6 +3,16 @@ from tkinter import ttk
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
+#TODO: task/todo-list
+#TODO: Session Log
+#TODO: total time spent label functionality
+
+# global variables
+timer_button_default_text: str = 'start timer'
+
+# initialization
+timer:Timer =Timer() 
+
 
 #region Stopwatch button related functions
 def reset():
@@ -24,61 +34,58 @@ def update_display():
         session_time_button.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
         root.after(500, update_display) #call function after 500ms, keeps UI Responsive
 
-def calculate_hours_minutes_seconds(elapsed_time_in_s:int):
+def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, int]:
     hours   = int( elapsed_time_in_s / 3600)  
     minutes = int((elapsed_time_in_s % 3600) / 60)  
     seconds = int(elapsed_time_in_s  % 60)
     return hours, minutes, seconds
  #endregion
 
-# global variables
-timer_button_default_text: str = 'start timer'
 
-# initialization
-timer:Timer =Timer() 
+#region GUI
 
 # window setup
 root = tk.Tk()
 sv_ttk.use_dark_theme()
 root.title('time_tracker')
-root.geometry('400x200')
-root.minsize(width=400, height=200)
+root.geometry('400x300')
+root.minsize(width=400, height=300)
 
 
-# left frame
-frame_left = ttk.Frame(root)
-frame_left.pack(side='left', fill='x', padx = 10, pady = 10)
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
-project_title_combobox = ttk.Combobox(frame_left, textvariable = project_name)
-project_title_combobox.pack(side='top', fill='x', padx = 10, pady = 10)
+project_title_combobox = ttk.Combobox(root, textvariable = project_name)
+project_title_combobox.grid(row=1, column=1, padx=10, pady=10)
 
 
-# subframe in left frame to group labels
-frame_total_time =ttk.Frame(frame_left)
-frame_total_time.pack(side='left', fill='x', padx = 10, pady = 10)
+# subframe to group total time labels
+frame_total_time =ttk.Frame(root)
+frame_total_time.grid(row=2, column=1, padx = 10, pady = 10)
+
 # total_time_label_name
 total_time_label_name = ttk.Label(frame_total_time, text = 'Total: ')
-total_time_label_name.pack(side='left',  padx = 10, pady = 10)
+total_time_label_name.grid(row=3, column=1,  padx = 10, pady = 10)
+
 # total_time_label
 total_time = tk.StringVar(value= 'dd:hh:mm:ss')
 total_time_label = ttk.Label(frame_total_time, textvariable = total_time)
-total_time_label.pack(side='right',  padx = 10, pady = 10)
+total_time_label.grid(row=4, column=1,  padx = 10, pady = 10)
 
 
-
-# right frame
-frame_right = ttk.Frame(root)
-frame_right.pack(side='right', padx = 10, pady = 10)
 # session_time_button
-session_time_button = ttk.Button(frame_right, text = timer_button_default_text , command = press_timer_button)
-session_time_button.pack(side='top', padx = 10, pady = 10)
+session_time_button = ttk.Button(root, text = timer_button_default_text , command = press_timer_button)
+session_time_button.grid(row= 1, column=3, padx = 10, pady = 10)
 
+
+# reset & save frame
+frame_reset_save = ttk.Frame(root)
+frame_reset_save.grid(row=2, column=3, padx=10, pady=10)
 
 # reset_button
-reset_button = ttk.Button(frame_right, text = 'reset', command = reset)
-reset_button.pack(side='top', padx = 10, pady = 10)
-# save_button
-save_button = ttk.Button(frame_right, text = 'save')
-save_button.pack(side='top', padx = 10, pady = 10)
+reset_button = ttk.Button(frame_reset_save, text = 'reset', command = reset)
+reset_button.grid(row= 2, column=3, padx = 5, pady = 5)
 
+# save_button
+save_button = ttk.Button(frame_reset_save, text = 'save')
+save_button.grid(row= 3, column=3, padx = 5, pady = 5)
+#endregion
