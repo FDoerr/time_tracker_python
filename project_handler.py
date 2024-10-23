@@ -149,7 +149,6 @@ def create_tasks_table() -> None:
 
  
 #region create triggers
-#TODO: create triggers for UPDATE consistency
 
 def create_trigger_check_project_id_on_session_insert() -> None:
 
@@ -393,25 +392,25 @@ def update_task_description(task_id:int, new_task_description:str) -> None:
 
 #region if __name__=='__main__':
 if __name__=='__main__':
-    
+    print(f'{__file__} is running directly.')
     # print(fetch_projects())
     # print(fetch_sessions(1))
     # print(fetch_tasks(1))
     # update_project('Project_name changed', 1)
     # update_task(1, 1)
     # update_session(2, 2, 'new date', 666, 1)
-    #update_session(1, new_task_id=5)  
-    #update_task(3, new_project_id = 2)
-    #update_task(1, 2, 'test')    
-    #update_task(2, new_task_description='test')   
-    #update_task(1)
+    # update_session(1, new_task_id=5)  
+    # update_task(3, new_project_id = 2)
+    # update_task(1, 2, 'test')    
+    # update_task(2, new_task_description='test')   
+    # update_task(1)
     # #del_project(1)
     # #del_session(1)
     # create_projects_table()
     # create_sessions_table()
     # create_tasks_table()
     # create_trigger_check_project_id_on_session_insert()
-    #create_trigger_check_project_id_on_session_update()
+    # create_trigger_check_project_id_on_session_update()
     # add_project('Projekt 1')
     # add_project('Projekt 2')
     # add_project('Projekt 3')
