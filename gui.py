@@ -3,8 +3,8 @@ from tkinter import ttk
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
-#TODO: task/todo-list
-#TODO: Session Log
+#TODO: task/todo-list -> treeview
+#TODO: Session Log -> treeView https://www.youtube.com/watch?v=n5gItcGgIkk
 #TODO: total time spent label functionality
 
 # global variables
@@ -54,7 +54,7 @@ root.minsize(width=400, height=300)
 
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
-project_title_combobox = ttk.Combobox(root, textvariable = project_name)
+project_title_combobox = tk.Listbox(root)#, textvariable = project_name)
 project_title_combobox.grid(row=1, column=1, padx=10, pady=10)
 
 
@@ -70,6 +70,10 @@ total_time_label_name.grid(row=3, column=1,  padx = 10, pady = 10)
 total_time = tk.StringVar(value= 'dd:hh:mm:ss')
 total_time_label = ttk.Label(frame_total_time, textvariable = total_time)
 total_time_label.grid(row=4, column=1,  padx = 10, pady = 10)
+
+
+# todo list
+#
 
 
 # session_time_button
