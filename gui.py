@@ -54,18 +54,16 @@ root.minsize(width=400, height=300)
 
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
-project_title_combobox = tk.Listbox(root)#, textvariable = project_name)
+project_title_combobox = ttk.Combobox(root, textvariable = project_name)
 project_title_combobox.grid(row=1, column=1, padx=10, pady=10)
 
 
 # subframe to group total time labels
 frame_total_time =ttk.Frame(root)
 frame_total_time.grid(row=2, column=1, padx = 10, pady = 10)
-
 # total_time_label_name
 total_time_label_name = ttk.Label(frame_total_time, text = 'Total: ')
 total_time_label_name.grid(row=3, column=1,  padx = 10, pady = 10)
-
 # total_time_label
 total_time = tk.StringVar(value= 'dd:hh:mm:ss')
 total_time_label = ttk.Label(frame_total_time, textvariable = total_time)
@@ -73,7 +71,19 @@ total_time_label.grid(row=4, column=1,  padx = 10, pady = 10)
 
 
 # todo list
-#
+# frame for treeview & scrollbar
+task_frame = ttk.Frame(root)
+task_frame.grid(row=5, column=1, padx=10, pady=10)
+# treeview
+task_list_tree_columns = ('ToDo: ',)
+task_list_tree = ttk.Treeview(task_frame, columns=task_list_tree_columns, show="headings", selectmode="browse", height=8)
+task_list_tree.heading(column='ToDo: ', text='ToDo: ')
+# scrollbar
+task_list_scrollbar = ttk.Scrollbar(task_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
+task_list_tree.configure(yscrollcommand=task_list_scrollbar.set)
+# Place the Treeview and scrollbar
+task_list_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 
 # session_time_button
