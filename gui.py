@@ -73,7 +73,7 @@ total_time_label.grid(row=4, column=1,  padx = 10, pady = 10)
 # todo list
 # frame for treeview & scrollbar
 task_frame = ttk.Frame(root)
-task_frame.grid(row=5, column=1, padx=10, pady=10)
+task_frame.grid(row=5, column=1, padx=5, pady=5)
 # treeview
 task_list_tree_columns = ('ToDo: ',)
 task_list_tree = ttk.Treeview(task_frame, columns=task_list_tree_columns, show="headings", selectmode="browse", height=8)
@@ -81,9 +81,26 @@ task_list_tree.heading(column='ToDo: ', text='ToDo: ')
 # scrollbar
 task_list_scrollbar = ttk.Scrollbar(task_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
 task_list_tree.configure(yscrollcommand=task_list_scrollbar.set)
-# Place the Treeview and scrollbar
+# Place  treeview and scrollbar
 task_list_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+# session log
+# frame for treeview & scrollbar
+log_frame = ttk.Frame(root)
+log_frame.grid(row=6, column=1, padx=10, pady=10)
+# treeview
+log_tree_column=  ('Date', 'Duration', 'Task')
+log_tree = ttk.Treeview(log_frame, columns=log_tree_column, show="headings", selectmode="browse", height=8)
+log_tree.heading(column=log_tree_column[0], text=log_tree_column[0])
+log_tree.heading(column=log_tree_column[1], text=log_tree_column[1])
+log_tree.heading(column=log_tree_column[2], text=log_tree_column[2])
+# scrollbar
+log_scrollbar = ttk.Scrollbar(log_frame, orient=tk.VERTICAL, command=log_tree.yview)
+log_tree.configure(yscrollcommand=log_scrollbar.set)
+# Place  treeview and scrollbar
+log_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+log_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 
 # session_time_button
