@@ -48,35 +48,36 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 root = tk.Tk()
 sv_ttk.use_dark_theme()
 root.title('time_tracker')
-root.geometry('400x300')
+root.geometry('800x500')
 root.minsize(width=400, height=300)
 
 
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
 project_title_combobox = ttk.Combobox(root, textvariable = project_name)
-project_title_combobox.grid(row=1, column=1, padx=10, pady=10)
+project_title_combobox.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
 
 
 # subframe to group total time labels
 frame_total_time =ttk.Frame(root)
-frame_total_time.grid(row=2, column=1, padx = 10, pady = 10)
+frame_total_time.grid(row=2, column=1, padx = 50, pady = 10, sticky=tk.EW)
 # total_time_label_name
 total_time_label_name = ttk.Label(frame_total_time, text = 'Total: ')
-total_time_label_name.grid(row=3, column=1,  padx = 10, pady = 10)
+total_time_label_name.pack(padx = 10, pady = 10)
+
 # total_time_label
 total_time = tk.StringVar(value= 'dd:hh:mm:ss')
 total_time_label = ttk.Label(frame_total_time, textvariable = total_time)
-total_time_label.grid(row=4, column=1,  padx = 10, pady = 10)
+total_time_label.pack(padx = 10, pady = 10)
 
 
 # todo list
 # frame for treeview & scrollbar
 task_frame = ttk.Frame(root)
-task_frame.grid(row=5, column=1, padx=5, pady=5)
+task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 # treeview
 task_list_tree_columns = ('ToDo: ',)
-task_list_tree = ttk.Treeview(task_frame, columns=task_list_tree_columns, show="headings", selectmode="browse", height=8)
+task_list_tree = ttk.Treeview(task_frame, columns=task_list_tree_columns, show="headings", selectmode="browse", height=3)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
 # scrollbar
 task_list_scrollbar = ttk.Scrollbar(task_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
@@ -85,13 +86,14 @@ task_list_tree.configure(yscrollcommand=task_list_scrollbar.set)
 task_list_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
+
 # session log
 # frame for treeview & scrollbar
 log_frame = ttk.Frame(root)
 log_frame.grid(row=6, column=1, padx=10, pady=10)
 # treeview
 log_tree_column=  ('Date', 'Duration', 'Task')
-log_tree = ttk.Treeview(log_frame, columns=log_tree_column, show="headings", selectmode="browse", height=8)
+log_tree = ttk.Treeview(log_frame, columns=log_tree_column, show="headings", selectmode=tk.BROWSE, height=4)
 log_tree.heading(column=log_tree_column[0], text=log_tree_column[0])
 log_tree.heading(column=log_tree_column[1], text=log_tree_column[1])
 log_tree.heading(column=log_tree_column[2], text=log_tree_column[2])
@@ -103,20 +105,19 @@ log_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 log_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 
-# session_time_button
-session_time_button = ttk.Button(root, text = timer_button_default_text , command = press_timer_button)
-session_time_button.grid(row= 1, column=3, padx = 10, pady = 10)
-
-
 # reset & save frame
 frame_reset_save = ttk.Frame(root)
-frame_reset_save.grid(row=2, column=3, padx=10, pady=10)
+frame_reset_save.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
+
+# session_time_button
+session_time_button = ttk.Button(frame_reset_save, text = timer_button_default_text , command = press_timer_button)
+session_time_button.pack(side=tk.LEFT, padx = 10, pady = 10, fill=tk.BOTH)
 
 # reset_button
 reset_button = ttk.Button(frame_reset_save, text = 'reset', command = reset)
-reset_button.grid(row= 2, column=3, padx = 5, pady = 5)
+reset_button.pack(side=tk.BOTTOM, padx = 10, pady = 10)
 
 # save_button
 save_button = ttk.Button(frame_reset_save, text = 'save')
-save_button.grid(row= 3, column=3, padx = 5, pady = 5)
+save_button.pack(side=tk.TOP, padx = 10, pady = 10)
 #endregion
