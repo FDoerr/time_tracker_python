@@ -74,10 +74,10 @@ total_time_label.pack(padx = 10, pady = 10)
 # todo list
 # frame for treeview & scrollbar
 task_frame = ttk.Frame(root)
-task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
+task_frame.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
 # task tree frame
 task_tree_frame = ttk.Frame(task_frame)
-task_tree_frame.pack(side=tk.TOP, padx=10, pady=5)
+task_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
 # treeview
 task_list_tree_columns = ('ToDo: ',)
 task_list_tree = ttk.Treeview(task_tree_frame, columns=task_list_tree_columns, show="headings", selectmode="browse", height=3)
@@ -90,7 +90,7 @@ task_list_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 # task button frame
 task_button_frame = ttk.Frame(task_frame)
-task_button_frame.pack(side=tk.BOTTOM, padx=10, pady=5)
+task_button_frame.pack(side=tk.BOTTOM, padx=5, pady=5)
 # add task button
 add_task_button = ttk.Button(task_button_frame, text='Add Task')
 add_task_button.pack(side=tk.LEFT, padx=5, pady=5)
@@ -103,33 +103,37 @@ delete_task_button.pack(side=tk.RIGHT, padx=5, pady=5)
 # frame for treeview & scrollbar
 log_frame = ttk.Frame(root)
 log_frame.grid(row=6, column=1, padx=10, pady=10)
+# log tree & scrollbar frame
+log_tree_frame = ttk.Frame(log_frame)
+log_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
 # treeview
 log_tree_column=  ('Date', 'Duration', 'Task')
-log_tree = ttk.Treeview(log_frame, columns=log_tree_column, show="headings", selectmode=tk.BROWSE, height=4)
+log_tree = ttk.Treeview(log_tree_frame, columns=log_tree_column, show="headings", selectmode=tk.BROWSE, height=4)
 log_tree.heading(column=log_tree_column[0], text=log_tree_column[0])
 log_tree.heading(column=log_tree_column[1], text=log_tree_column[1])
 log_tree.heading(column=log_tree_column[2], text=log_tree_column[2])
 # scrollbar
-log_scrollbar = ttk.Scrollbar(log_frame, orient=tk.VERTICAL, command=log_tree.yview)
+log_scrollbar = ttk.Scrollbar(log_tree_frame, orient=tk.VERTICAL, command=log_tree.yview)
 log_tree.configure(yscrollcommand=log_scrollbar.set)
 # Place  treeview and scrollbar
 log_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 log_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
+#delete session button
+delete_session_button = ttk.Button(log_frame, text = 'Delete Session')
+delete_session_button.pack(side=tk.BOTTOM, padx=5, pady=5)
 
 # reset & save frame
 frame_reset_save = ttk.Frame(root)
 frame_reset_save.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
-
 # session_time_button
 session_time_button = ttk.Button(frame_reset_save, text = timer_button_default_text , command = press_timer_button)
 session_time_button.pack(side=tk.LEFT, padx = 10, pady = 10, fill=tk.BOTH)
-
 # reset_button
-reset_button = ttk.Button(frame_reset_save, text = 'reset', command = reset)
+reset_button = ttk.Button(frame_reset_save, text = 'Reset', command = reset)
 reset_button.pack(side=tk.BOTTOM, padx = 10, pady = 10)
-
 # save_button
-save_button = ttk.Button(frame_reset_save, text = 'save')
+save_button = ttk.Button(frame_reset_save, text = 'Save')
 save_button.pack(side=tk.TOP, padx = 10, pady = 10)
+
+
 #endregion
