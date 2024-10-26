@@ -75,16 +75,28 @@ total_time_label.pack(padx = 10, pady = 10)
 # frame for treeview & scrollbar
 task_frame = ttk.Frame(root)
 task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
+# task tree frame
+task_tree_frame = ttk.Frame(task_frame)
+task_tree_frame.pack(side=tk.TOP, padx=10, pady=5)
 # treeview
 task_list_tree_columns = ('ToDo: ',)
-task_list_tree = ttk.Treeview(task_frame, columns=task_list_tree_columns, show="headings", selectmode="browse", height=3)
+task_list_tree = ttk.Treeview(task_tree_frame, columns=task_list_tree_columns, show="headings", selectmode="browse", height=3)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
 # scrollbar
-task_list_scrollbar = ttk.Scrollbar(task_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
+task_list_scrollbar = ttk.Scrollbar(task_tree_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
 task_list_tree.configure(yscrollcommand=task_list_scrollbar.set)
 # Place  treeview and scrollbar
 task_list_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+# task button frame
+task_button_frame = ttk.Frame(task_frame)
+task_button_frame.pack(side=tk.BOTTOM, padx=10, pady=5)
+# add task button
+add_task_button = ttk.Button(task_button_frame, text='Add Task')
+add_task_button.pack(side=tk.LEFT, padx=5, pady=5)
+# delete task button
+delete_task_button = ttk.Button(task_button_frame, text='Delete Task')
+delete_task_button.pack(side=tk.RIGHT, padx=5, pady=5)
 
 
 # session log
