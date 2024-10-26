@@ -3,6 +3,7 @@ from tkinter import ttk
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
+#TODO: change to this style: https://ttkbootstrap.readthedocs.io/en/version-0.5/tutorial.html
 #TODO: task/todo-list -> treeview
 #TODO: Session Log -> treeView https://www.youtube.com/watch?v=n5gItcGgIkk
 #TODO: total time spent label functionality
@@ -48,15 +49,22 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 root = tk.Tk()
 sv_ttk.use_dark_theme()
 root.title('time_tracker')
-root.geometry('800x500')
+root.geometry('675x475') #width x height
 root.minsize(width=400, height=300)
 
-
+#project display frame
+project_display_frame = ttk.Frame(root)
+project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
-project_title_combobox = ttk.Combobox(root, textvariable = project_name)
-project_title_combobox.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
-
+project_title_combobox = ttk.Menubutton(project_display_frame, textvariable = project_name, state='readonly')
+project_title_combobox.pack(side=tk.LEFT, padx=10)
+# add project button
+add_project_button = ttk.Button(project_display_frame, text='Add Project')
+add_project_button.pack(side=tk.LEFT, padx=10)
+# delete project button
+delete_project_button = ttk.Button(project_display_frame, text='delete Project')
+delete_project_button.pack(side=tk.LEFT, padx=10)
 
 # subframe to group total time labels
 frame_total_time =ttk.Frame(root)
@@ -74,13 +82,17 @@ total_time_label.pack(padx = 10, pady = 10)
 # todo list
 # frame for treeview & scrollbar
 task_frame = ttk.Frame(root)
-task_frame.grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
+task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 # task tree frame
 task_tree_frame = ttk.Frame(task_frame)
-task_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
+task_tree_frame.pack(side=tk.TOP, padx=10, pady=5)
 # treeview
 task_list_tree_columns = ('ToDo: ',)
-task_list_tree = ttk.Treeview(task_tree_frame, columns=task_list_tree_columns, show="headings", selectmode="browse", height=3)
+task_list_tree = ttk.Treeview(task_tree_frame,
+                              columns    = task_list_tree_columns,
+                              show       = "headings",
+                              selectmode = "browse",
+                              height     = 3)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
 # scrollbar
 task_list_scrollbar = ttk.Scrollbar(task_tree_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
@@ -90,7 +102,7 @@ task_list_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 # task button frame
 task_button_frame = ttk.Frame(task_frame)
-task_button_frame.pack(side=tk.BOTTOM, padx=5, pady=5)
+task_button_frame.pack(side=tk.BOTTOM, padx=0, pady=5)
 # add task button
 add_task_button = ttk.Button(task_button_frame, text='Add Task')
 add_task_button.pack(side=tk.LEFT, padx=5, pady=5)
@@ -101,14 +113,18 @@ delete_task_button.pack(side=tk.RIGHT, padx=5, pady=5)
 
 # session log
 # frame for treeview & scrollbar
-log_frame = ttk.Frame(root)
+log_frame = ttk.Labelframe(root, text='logs')
 log_frame.grid(row=6, column=1, padx=10, pady=10)
 # log tree & scrollbar frame
 log_tree_frame = ttk.Frame(log_frame)
 log_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
 # treeview
 log_tree_column=  ('Date', 'Duration', 'Task')
-log_tree = ttk.Treeview(log_tree_frame, columns=log_tree_column, show="headings", selectmode=tk.BROWSE, height=4)
+log_tree = ttk.Treeview(log_tree_frame,
+                        columns     = log_tree_column,
+                        show        = "headings",
+                        selectmode  = tk.BROWSE,
+                        height      = 4)
 log_tree.heading(column=log_tree_column[0], text=log_tree_column[0])
 log_tree.heading(column=log_tree_column[1], text=log_tree_column[1])
 log_tree.heading(column=log_tree_column[2], text=log_tree_column[2])
