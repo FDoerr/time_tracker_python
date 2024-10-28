@@ -44,18 +44,26 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 #region project related functions
 #TODO
 def add_project():
+    print('Add Project Button pressed')
     ...
 
 def del_project():
+    print('Delete Project Button pressed')
     ...
 
 def select_project():
+    print('Project selected')
     ...
 
 def fetch_projects():
+    print('fetching projects')
     ...
 
 def update_projects_display():
+    print('updating projects display')
+    fetch_projects()
+    update_task_display()
+    update_session_log_display()
     ...
 
 #endregion
@@ -63,30 +71,40 @@ def update_projects_display():
 #region task list related functions
 #TODO
 def add_task():
+    print('add task button pressed')
     ...
 
 def del_task():
+    print('delete task button pressed')
     ...
 
 def fetch_tasks():
+    print('fetching tasks')
     ...
 
 def update_task_display():
+    print('updating tasks display')
+    fetch_tasks()
     ...
 #endregion
 
 #region session log related functions
 #TODO
-def add_session_log():
+def add_session():
+    print('save button pressed | add session')
     ...
 
-def del_session_log():
+def del_session():
+    print('delete session button pressed')
     ...
 
 def fetch_session_logs():
+    print('fetching session_logs')
     ...
 
 def update_session_log_display():
+    print('updating session_log_display')
+    fetch_session_logs()
     ...
 #endregion
 
