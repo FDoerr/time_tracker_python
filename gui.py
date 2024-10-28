@@ -26,7 +26,7 @@ def press_timer_button() -> None:
     else:
         timer.start()
         update_display()
-
+#TODO: Rename function
 def update_display() -> None:
     if timer.running:
         elapsed_time = timer.get_elapsed_time()        
@@ -62,9 +62,13 @@ def fetch_projects():
 def update_projects_display():
     print('updating projects display')
     fetch_projects()
+    ...
+
+def press_project_menubutton():
+    print('project menubutton pressed')
+    update_projects_display()
     update_task_display()
     update_session_log_display()
-    ...
 
 #endregion
 
@@ -120,7 +124,7 @@ root.minsize(width=400, height=300)
 #project display frame
 project_display_frame = ttk.Frame(root)
 project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
-# project_title_combobox
+# project_title_Menubutton
 project_name = tk.StringVar(value= 'Project name')
 project_title_combobox = ttk.Menubutton(project_display_frame, textvariable = project_name, state='readonly')
 project_title_combobox.pack(side=tk.LEFT, padx=10)
