@@ -4,8 +4,7 @@ import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
 #TODO: change to this style: https://ttkbootstrap.readthedocs.io/en/version-0.5/tutorial.html
-#TODO: task/todo-list -> treeview
-#TODO: Session Log -> treeView https://www.youtube.com/watch?v=n5gItcGgIkk
+#TODO: editable Treeview cells: https://www.youtube.com/watch?v=n5gItcGgIkk
 #TODO: total time spent label functionality
 
 # global variables
@@ -16,19 +15,19 @@ timer:Timer =Timer()
 
 
 #region Stopwatch button related functions
-def reset():
+def reset() -> None:
     timer.stop()
     timer.reset()
     session_time_button.config(text=timer_button_default_text)
 
-def press_timer_button():
+def press_timer_button() -> None:
     if timer.running:
         timer.stop()
     else:
         timer.start()
         update_display()
 
-def update_display():
+def update_display() -> None:
     if timer.running:
         elapsed_time = timer.get_elapsed_time()        
         hours, minutes, seconds = calculate_hours_minutes_seconds(elapsed_time)
@@ -42,6 +41,54 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
     return hours, minutes, seconds
  #endregion
 
+#region project related functions
+#TODO
+def add_project():
+    ...
+
+def del_project():
+    ...
+
+def select_project():
+    ...
+
+def fetch_projects():
+    ...
+
+def update_projects_display():
+    ...
+
+#endregion
+
+#region task list related functions
+#TODO
+def add_task():
+    ...
+
+def del_task():
+    ...
+
+def fetch_tasks():
+    ...
+
+def update_task_display():
+    ...
+#endregion
+
+#region session log related functions
+#TODO
+def add_session_log():
+    ...
+
+def del_session_log():
+    ...
+
+def fetch_session_logs():
+    ...
+
+def update_session_log_display():
+    ...
+#endregion
 
 #region GUI
 
