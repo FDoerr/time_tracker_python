@@ -62,8 +62,10 @@ def del_project():
     print('Delete Project Button pressed')
     ...
 
-def select_project():
+def select_project(event):
     print('Project selected')
+    update_task_display()
+    update_session_log_display()
     ...
 
 def fetch_projects():
@@ -73,13 +75,13 @@ def fetch_projects():
 def update_projects_display():
     print('updating projects display')
     fetch_projects()
+    project_title_combobox['values'] = [1, 2, 3, 4]
     ...
 
 def press_project_menubutton():
     print('project menubutton pressed')
     update_projects_display()
-    update_task_display()
-    update_session_log_display()
+    ...
 
 #endregion
 
@@ -99,7 +101,10 @@ def fetch_tasks():
 
 def update_task_display():
     print('updating tasks display')
-    fetch_tasks()
+    fetch_tasks()    
+    
+    for i in range(1, 10):
+        task_list_tree.insert('','end', values=[i])
     ...
 #endregion
 
@@ -120,6 +125,9 @@ def fetch_session_logs():
 def update_session_log_display():
     print('updating session_log_display')
     fetch_session_logs()
+    for i in range(1, 10):
+        log_tree.insert('','end', values=(i, i, i))
+    
     ...
 #endregion
 
@@ -136,15 +144,16 @@ root.minsize(width=400, height=300)
 #project display frame
 project_display_frame = ttk.Frame(root)
 project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
-# project_title_Menubutton
+# project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
-project_title_combobox = ttk.Menubutton(project_display_frame, textvariable = project_name, state='readonly')
+project_title_combobox = ttk.Combobox(project_display_frame, textvariable = project_name, state='readonly',height=5, postcommand=press_project_menubutton)
+project_title_combobox.bind('<<ComboboxSelected>>', select_project)
 project_title_combobox.pack(side=tk.LEFT, padx=10)
 # add project button
-add_project_button = ttk.Button(project_display_frame, text='Add Project')
+add_project_button = ttk.Button(project_display_frame, text='Add Project', command=add_project)
 add_project_button.pack(side=tk.LEFT, padx=10)
 # delete project button
-delete_project_button = ttk.Button(project_display_frame, text='delete Project')
+delete_project_button = ttk.Button(project_display_frame, text='delete Project', command=del_project)
 delete_project_button.pack(side=tk.LEFT, padx=10)
 #endregion
 
@@ -189,10 +198,10 @@ task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 task_button_frame = ttk.Frame(task_frame)
 task_button_frame.pack(side=tk.BOTTOM, padx=0, pady=5)
 # add task button
-add_task_button = ttk.Button(task_button_frame, text='Add Task')
+add_task_button = ttk.Button(task_button_frame, text='Add Task', command=add_task)
 add_task_button.pack(side=tk.LEFT, padx=5, pady=5)
 # delete task button
-delete_task_button = ttk.Button(task_button_frame, text='Delete Task')
+delete_task_button = ttk.Button(task_button_frame, text='Delete Task', command=del_task)
 delete_task_button.pack(side=tk.RIGHT, padx=5, pady=5)
 #endregion
 
@@ -221,7 +230,7 @@ log_tree.configure(yscrollcommand=log_scrollbar.set)
 log_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 log_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 #delete session button
-delete_session_button = ttk.Button(log_frame, text = 'Delete Session')
+delete_session_button = ttk.Button(log_frame, text = 'Delete Session', command= del_session)
 delete_session_button.pack(side=tk.BOTTOM, padx=5, pady=5)
 #endregion
 
