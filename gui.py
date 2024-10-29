@@ -16,7 +16,6 @@ timer:Timer =Timer()
 
 #region Stopwatch button related functions
 def reset() -> None:
-
     timer.stop()
     timer.reset()
     session_time_button.config(text=timer_button_default_text)
@@ -124,15 +123,16 @@ def update_session_log_display():
     ...
 #endregion
 
-#region GUI
-
-# window setup
+#region GUI setup
+#window setup
 root = tk.Tk()
 sv_ttk.use_dark_theme()
 root.title('time_tracker')
 root.geometry('675x475') #width x height
 root.minsize(width=400, height=300)
 
+
+#region project UI Elements
 #project display frame
 project_display_frame = ttk.Frame(root)
 project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
@@ -146,7 +146,9 @@ add_project_button.pack(side=tk.LEFT, padx=10)
 # delete project button
 delete_project_button = ttk.Button(project_display_frame, text='delete Project')
 delete_project_button.pack(side=tk.LEFT, padx=10)
+#endregion
 
+#region total time label UI Elements
 # subframe to group total time labels
 frame_total_time =ttk.Frame(root)
 frame_total_time.grid(row=2, column=1, padx = 50, pady = 10, sticky=tk.EW)
@@ -158,9 +160,11 @@ total_time_label_name.pack(padx = 10, pady = 10)
 total_time = tk.StringVar(value= 'dd:hh:mm:ss')
 total_time_label = ttk.Label(frame_total_time, textvariable = total_time)
 total_time_label.pack(padx = 10, pady = 10)
+#endregion
 
 
-# todo list
+
+#region todo list UI Elements
 # frame for treeview & scrollbar
 task_frame = ttk.Frame(root)
 task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
@@ -190,9 +194,10 @@ add_task_button.pack(side=tk.LEFT, padx=5, pady=5)
 # delete task button
 delete_task_button = ttk.Button(task_button_frame, text='Delete Task')
 delete_task_button.pack(side=tk.RIGHT, padx=5, pady=5)
+#endregion
 
 
-# session log
+#region session log UI Elements
 # frame for treeview & scrollbar
 log_frame = ttk.Labelframe(root, text='logs')
 log_frame.grid(row=6, column=1, padx=10, pady=10)
@@ -218,7 +223,9 @@ log_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 #delete session button
 delete_session_button = ttk.Button(log_frame, text = 'Delete Session')
 delete_session_button.pack(side=tk.BOTTOM, padx=5, pady=5)
+#endregion
 
+#region Timer Button UI Elements
 # reset & save frame
 frame_reset_save = ttk.Frame(root)
 frame_reset_save.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
@@ -229,8 +236,8 @@ session_time_button.pack(side=tk.LEFT, padx = 10, pady = 10, fill=tk.BOTH)
 reset_button = ttk.Button(frame_reset_save, text = 'Reset', command = reset)
 reset_button.pack(side=tk.BOTTOM, padx = 10, pady = 10)
 # save_button
-save_button = ttk.Button(frame_reset_save, text = 'Save')
+save_button = ttk.Button(frame_reset_save, text = 'Save', command=add_session)
 save_button.pack(side=tk.TOP, padx = 10, pady = 10)
-
+#endregion
 
 #endregion
