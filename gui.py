@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import simpledialog
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
@@ -64,11 +65,11 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 
 #region project related functions
 #TODO
-def add_project():
-    print('Add Project Button pressed')
-    # open popup with project name entry
+def add_project() -> None: 
+    project_name: str | None = simpledialog.askstring('New Project', 'Enter new project name: ')
+    if project_name is not None:
+        db.add_project(project_name)
     
-    ...
 
 def del_project():
     print('Delete Project Button pressed')
