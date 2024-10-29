@@ -3,9 +3,19 @@ from tkinter import ttk
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
+import project_handler as db
 #TODO: change to this style: https://ttkbootstrap.readthedocs.io/en/version-0.5/tutorial.html
 #TODO: editable Treeview cells: https://www.youtube.com/watch?v=n5gItcGgIkk
 #TODO: total time spent label functionality
+#TODO: Functionality to add:
+#     [ ] add Project
+#     [ ]     -> Populate projects dropdown
+#     [ ]         -> add task
+#     [ ]             -> populate tasks
+#     [ ]                 -> save session | add to log
+#     [ ]                     -> populate logs
+#     [ ]                         -> delete project/task/session
+
 
 # global variables
 timer_button_default_text: str = '⏺ start timer '
@@ -56,6 +66,8 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 #TODO
 def add_project():
     print('Add Project Button pressed')
+    # open popup with project name entry
+    
     ...
 
 def del_project():
