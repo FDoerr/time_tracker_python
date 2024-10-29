@@ -7,10 +7,12 @@ class Timer:
         self.start_time:   float = 0.0
         self.current_time: float = 0.0
         self.elapsed_time: float = 0.0
+        self.was_reset:    bool  = False
 
     def start(self) -> None:
         self.start_time = time.time() - self.elapsed_time
-        self.running    = True      
+        self.running    = True   
+        self.was_reset  = False   
 
     def stop(self) -> None:
         self.running= False
@@ -19,6 +21,7 @@ class Timer:
         self.start_time   = 0.0
         self.current_time = 0.0
         self.elapsed_time = 0.0
+        self.was_reset    = True
 
     def get_elapsed_time(self) -> int:
         self.update_timer()

@@ -16,14 +16,10 @@ timer:Timer =Timer()
 
 #region Stopwatch button related functions
 def reset() -> None:
-    # quick fix for the timer not displaying the default text when reseting while running
-    # TODO: Fix this properly by putting a flag in the timer class
-    def reset_session_time_text() -> None:
-        session_time_button.config(text=timer_button_default_text)
-    root.after(timer_display_delay_in_ms+10, reset_session_time_text)
 
     timer.stop()
     timer.reset()
+    session_time_button.config(text=timer_button_default_text)
     
     
 def press_timer_button() -> None:
@@ -34,10 +30,14 @@ def press_timer_button() -> None:
         update_timer_display()
 
 def update_timer_display() -> None:
-    
-        elapsed_time = timer.get_elapsed_time()        
+        
+        if timer.was_reset: #prevents timer_display from updating to 00:00:00 when reset while running
+            return
+        
+        elapsed_time: int = timer.get_elapsed_time()        
         hours, minutes, seconds = calculate_hours_minutes_seconds(elapsed_time)
         formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"
+
         if timer.running:
             session_time_button.config(text=f"⏸ {formated_time}") # ⏵⏸ ⏯ ⏺
             root.after(timer_display_delay_in_ms, update_timer_display) #call function after 100ms, keeps UI Responsive
