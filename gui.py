@@ -8,31 +8,42 @@ from timer import Timer
 #TODO: total time spent label functionality
 
 # global variables
-timer_button_default_text: str = 'start timer'
-
+timer_button_default_text: str = '⏺ start timer '
+timer_display_delay_in_ms:int = 50
 # initialization
 timer:Timer =Timer() 
 
 
 #region Stopwatch button related functions
 def reset() -> None:
+    # quick fix for the timer not displaying the default text when reseting while running
+    # TODO: Fix this properly by putting a flag in the timer class
+    def reset_session_time_text() -> None:
+        session_time_button.config(text=timer_button_default_text)
+    root.after(timer_display_delay_in_ms+10, reset_session_time_text)
+
     timer.stop()
     timer.reset()
-    session_time_button.config(text=timer_button_default_text)
-
+    
+    
 def press_timer_button() -> None:
     if timer.running:
         timer.stop()
     else:
         timer.start()
-        update_display()
-#TODO: Rename function
-def update_display() -> None:
-    if timer.running:
+        update_timer_display()
+
+def update_timer_display() -> None:
+    
         elapsed_time = timer.get_elapsed_time()        
         hours, minutes, seconds = calculate_hours_minutes_seconds(elapsed_time)
-        session_time_button.config(text=f"{hours:02}:{minutes:02}:{seconds:02}")
-        root.after(500, update_display) #call function after 500ms, keeps UI Responsive
+        formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"
+        if timer.running:
+            session_time_button.config(text=f"⏸ {formated_time}") # ⏵⏸ ⏯ ⏺
+            root.after(timer_display_delay_in_ms, update_timer_display) #call function after 100ms, keeps UI Responsive
+        else:
+           session_time_button.config(text=f"⏵ {formated_time}") 
+      
 
 def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, int]:
     hours   = int( elapsed_time_in_s / 3600)  
@@ -40,6 +51,7 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
     seconds = int(elapsed_time_in_s  % 60)
     return hours, minutes, seconds
  #endregion
+
 
 #region project related functions
 #TODO
