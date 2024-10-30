@@ -9,8 +9,8 @@ import project_handler as db
 #TODO: editable Treeview cells: https://www.youtube.com/watch?v=n5gItcGgIkk
 #TODO: total time spent label functionality
 #TODO: Functionality to add:
-#     [ ] add Project
-#     [ ]     -> Populate projects dropdown
+#     [X] add Project
+#     [X]     -> Populate projects dropdown
 #     [ ]         -> add task
 #     [ ]             -> populate tasks
 #     [ ]                 -> save session | add to log
@@ -64,13 +64,13 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 
 
 #region project related functions
-#TODO
+
 def add_project() -> None: 
     project_name: str | None = simpledialog.askstring('New Project', 'Enter new project name: ')
     if project_name is not None:
         db.add_project(project_name)
     
-
+#TODO
 def del_project():
     print('Delete Project Button pressed')
     ...
@@ -81,20 +81,23 @@ def select_project(event):
     update_session_log_display()
     ...
 
-def fetch_projects():
-    print('fetching projects')
-    ...
+def fetch_projects() -> list[dict]:    
+    projects: list[dict] = db.fetch_projects()    
+    return projects
+    
 
-def update_projects_display():
-    print('updating projects display')
-    fetch_projects()
-    project_title_combobox['values'] = [1, 2, 3, 4]
-    ...
+def update_projects_display(projects:list[dict]) -> None:
+    project_list: list[str]= []
+    for project in projects:
+        project_str: str = f'{project['project_id']} | {project['project_name']}'
+        project_list.append(project_str)
+    
+    project_title_combobox['values'] = project_list
+    
 
-def press_project_menubutton():
-    print('project menubutton pressed')
-    update_projects_display()
-    ...
+def click_projects_combobox() -> None:    
+    projects: list[dict] = fetch_projects()
+    update_projects_display(projects)
 
 #endregion
 
@@ -159,7 +162,7 @@ project_display_frame = ttk.Frame(root)
 project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
-project_title_combobox = ttk.Combobox(project_display_frame, textvariable = project_name, state='readonly',height=5, postcommand=press_project_menubutton)
+project_title_combobox = ttk.Combobox(project_display_frame, textvariable = project_name, state='readonly',height=5, postcommand=click_projects_combobox)
 project_title_combobox.bind('<<ComboboxSelected>>', select_project)
 project_title_combobox.pack(side=tk.LEFT, padx=10)
 # add project button
