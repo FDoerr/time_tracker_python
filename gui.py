@@ -20,7 +20,9 @@ import project_handler as db
 
 # global variables
 timer_button_default_text: str = '⏺ start timer '
-timer_display_delay_in_ms:int = 50
+timer_display_delay_in_ms: int = 50
+
+
 # initialization
 timer:Timer =Timer() 
 
@@ -74,9 +76,12 @@ def add_project() -> None:
 def del_project():
     print('Delete Project Button pressed')
     ...
+# TODO: TEst two projects with same name but different ID
+def select_project(event):      
+    selected_project: int =  project_title_combobox.project_dict.get(project_title_combobox.get())
 
-def select_project(event):
-    print('Project selected')
+    print(f'{selected_project=} {type(selected_project)}')
+
     update_task_display()
     update_session_log_display()
     ...
@@ -85,14 +90,14 @@ def fetch_projects() -> list[dict]:
     projects: list[dict] = db.fetch_projects()    
     return projects
     
-
 def update_projects_display(projects:list[dict]) -> None:
-    project_list: list[str]= []
+    new_project_dict = dict()
     for project in projects:
-        project_str: str = f'{project['project_id']} | {project['project_name']}'
-        project_list.append(project_str)
+        new_project_dict[project['project_name']] = project['project_id']
     
-    project_title_combobox['values'] = project_list
+    project_title_combobox['values'] = list(new_project_dict.keys())
+    project_title_combobox.project_dict = new_project_dict    
+
     
 
 def click_projects_combobox() -> None:    
@@ -103,9 +108,12 @@ def click_projects_combobox() -> None:
 
 #region task list related functions
 #TODO
-def add_task():
-    print('add task button pressed')
-    ...
+def add_task():    
+    task_name: str | None = simpledialog.askstring('New Task', 'Enter new Task Descriptor: ')
+    if task_name and active_project_id is not None:
+        db.add_task(active_project_id, task_name)
+    else:
+        print('no active project id')
 
 def del_task():
     print('delete task button pressed')
@@ -165,6 +173,7 @@ project_name = tk.StringVar(value= 'Project name')
 project_title_combobox = ttk.Combobox(project_display_frame, textvariable = project_name, state='readonly',height=5, postcommand=click_projects_combobox)
 project_title_combobox.bind('<<ComboboxSelected>>', select_project)
 project_title_combobox.pack(side=tk.LEFT, padx=10)
+project_title_combobox.project_dict = dict() #adds project_dict attribute for future reference
 # add project button
 add_project_button = ttk.Button(project_display_frame, text='Add Project', command=add_project)
 add_project_button.pack(side=tk.LEFT, padx=10)
