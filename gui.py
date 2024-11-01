@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
+from tkinter import messagebox
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
@@ -69,13 +70,18 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 
 def add_project() -> None: 
     project_name: str | None = simpledialog.askstring('New Project', 'Enter new project name: ')
-    if project_name is not None:
+    if project_name in project_title_combobox.project_dict:
+        messagebox.showwarning("Duplicate Entry", "This project name already exists.")
+        return
+    elif project_name is not None:
         db.add_project(project_name)
     
 #TODO
 def del_project():
     print('Delete Project Button pressed')
     ...
+
+    
 # TODO: TEst two projects with same name but different ID
 def select_project(event):      
     selected_project: int =  project_title_combobox.project_dict.get(project_title_combobox.get())
@@ -93,7 +99,7 @@ def fetch_projects() -> list[dict]:
 def update_projects_display(projects:list[dict]) -> None:
     new_project_dict = dict()
     for project in projects:
-        new_project_dict[project['project_name']] = project['project_id']
+        new_project_dict[project['project_name']] = project['project_id'] # using the name as a key, is easier for finding ID
     
     project_title_combobox['values'] = list(new_project_dict.keys())
     project_title_combobox.project_dict = new_project_dict    
