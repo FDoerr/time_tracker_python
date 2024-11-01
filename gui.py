@@ -80,13 +80,13 @@ def add_project() -> None:
 def del_project():
     print('Delete Project Button pressed')
     ...
-
+def get_selected_project() -> int:
+    selected_project_id: int =  project_title_combobox.project_dict.get(project_title_combobox.get())
+    return selected_project_id
     
 # TODO: TEst two projects with same name but different ID
 def select_project(event):      
-    selected_project: int =  project_title_combobox.project_dict.get(project_title_combobox.get())
-
-    print(f'{selected_project=} {type(selected_project)}')
+    selected_project_id: int =  get_selected_project()
 
     update_task_display()
     update_session_log_display()
