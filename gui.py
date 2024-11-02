@@ -88,8 +88,8 @@ def get_selected_project() -> int:
 def select_project(event):      
     selected_project_id: int =  get_selected_project()
 
-    update_task_display()
-    update_session_log_display()
+    update_task_display(selected_project_id)
+    update_session_log_display(selected_project_id)
     ...
 
 def fetch_projects() -> list[dict]:    
@@ -113,25 +113,31 @@ def click_projects_combobox() -> None:
 #endregion
 
 #region task list related functions
-#TODO
-def add_task():    
+#TODO:: track task list and prevent double entries
+def add_task():
+    selected_project_id: int = get_selected_project()    
+    if selected_project_id is None:
+        messagebox.showwarning('No Active Project', 'No active project')
+        return
+    
     task_name: str | None = simpledialog.askstring('New Task', 'Enter new Task Descriptor: ')
-    if task_name and active_project_id is not None:
-        db.add_task(active_project_id, task_name)
+    if task_name is None:
+        messagebox.showinfo('No Task Descriptior', 'Enter task descriptor.')
     else:
-        print('no active project id')
+        db.add_task(selected_project_id, task_name)
+        
 
 def del_task():
     print('delete task button pressed')
     ...
 
-def fetch_tasks():
+def fetch_tasks(selected_project_id):
     print('fetching tasks')
     ...
 
-def update_task_display():
+def update_task_display(selected_project_id):
     print('updating tasks display')
-    fetch_tasks()    
+    fetch_tasks(selected_project_id)    
     
     for i in range(1, 10):
         task_list_tree.insert('','end', values=[i])
@@ -152,7 +158,7 @@ def fetch_session_logs():
     print('fetching session_logs')
     ...
 
-def update_session_log_display():
+def update_session_log_display(selected_project_id):
     print('updating session_log_display')
     fetch_session_logs()
     for i in range(1, 10):
