@@ -80,22 +80,26 @@ def add_project() -> None:
 def del_project():
     print('Delete Project Button pressed')
     ...
+
+
 def get_selected_project() -> int:
     selected_project_id: int =  project_title_combobox.project_dict.get(project_title_combobox.get())
     return selected_project_id
     
-# TODO: TEst two projects with same name but different ID
+
 def select_project(event):      
     selected_project_id: int =  get_selected_project()
-
-    update_task_display(selected_project_id)
+    tasks: list[dict] = fetch_tasks(selected_project_id)
+    update_task_display(tasks)
     update_session_log_display(selected_project_id)
     ...
+
 
 def fetch_projects() -> list[dict]:    
     projects: list[dict] = db.fetch_projects()    
     return projects
     
+
 def update_projects_display(projects:list[dict]) -> None:
     new_project_dict = dict()
     for project in projects:
@@ -104,11 +108,11 @@ def update_projects_display(projects:list[dict]) -> None:
     project_title_combobox['values'] = list(new_project_dict.keys())
     project_title_combobox.project_dict = new_project_dict    
 
-    
 
 def click_projects_combobox() -> None:    
     projects: list[dict] = fetch_projects()
     update_projects_display(projects)
+    
 
 #endregion
 
@@ -131,16 +135,24 @@ def del_task():
     print('delete task button pressed')
     ...
 
-def fetch_tasks(selected_project_id):
-    print('fetching tasks')
+
+def fetch_tasks(selected_project_id) -> list[dict]:    
+    tasks: list[dict] = db.fetch_tasks(selected_project_id)    
+    return tasks
     ...
 
-def update_task_display(selected_project_id):
-    print('updating tasks display')
-    fetch_tasks(selected_project_id)    
-    
-    for i in range(1, 10):
-        task_list_tree.insert('','end', values=[i])
+
+def update_task_display(tasks:list[dict]):
+    print(tasks)
+    for item in task_list_tree.get_children():
+        task_list_tree.delete(item)
+
+    for task in tasks:        
+        task_list_tree.insert('', task['task_id'], values=(task['task_description'],), tags=task['task_id'])
+        
+        #checks if item with this id/tag has been in the dictionary before
+        # iid =  task_list_tree.tag_has( task['task_id'])
+        # print('--->', task_list_tree.exists(iid[0]))
     ...
 #endregion
 
