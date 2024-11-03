@@ -73,7 +73,12 @@ def add_project() -> None:
     if project_name in project_title_combobox.project_dict:
         messagebox.showwarning("Duplicate Entry", "This project name already exists.")
         return
-    elif project_name is not None:
+    elif project_name == '':
+        messagebox.showinfo('No Project Name', 'Enter project name.')
+        return
+    elif project_name is None:
+        return
+    else:
         db.add_project(project_name)
     
 #TODO
@@ -86,13 +91,16 @@ def get_selected_project() -> int:
     selected_project_id: int =  project_title_combobox.project_dict.get(project_title_combobox.get())
     return selected_project_id
     
+    
+def click_select_project(event):
+    select_project()
 
-def select_project(event):      
+
+def select_project():      
     selected_project_id: int =  get_selected_project()
     tasks: list[dict] = fetch_tasks(selected_project_id)
     update_task_display(tasks)
-    update_session_log_display(selected_project_id)
-    ...
+    update_session_log_display(selected_project_id)    
 
 
 def fetch_projects() -> list[dict]:    
@@ -106,7 +114,7 @@ def update_projects_display(projects:list[dict]) -> None:
         new_project_dict[project['project_name']] = project['project_id'] # using the name as a key, is easier for finding ID
     
     project_title_combobox['values'] = list(new_project_dict.keys())
-    project_title_combobox.project_dict = new_project_dict    
+    project_title_combobox.project_dict = new_project_dict #"reverse" dict for referencing id from name
 
 
 def click_projects_combobox() -> None:    
@@ -117,18 +125,24 @@ def click_projects_combobox() -> None:
 #endregion
 
 #region task list related functions
-#TODO:: track task list and prevent double entries
 def add_task():
     selected_project_id: int = get_selected_project()    
     if selected_project_id is None:
         messagebox.showwarning('No Active Project', 'No active project')
         return
-    
-    task_name: str | None = simpledialog.askstring('New Task', 'Enter new Task Descriptor: ')
-    if task_name is None:
+        
+    task_name: str | None = simpledialog.askstring('New Task', 'Enter new Task Descriptor: ') 
+    if task_name in task_list_tree.task_dict:
+        messagebox.showwarning("Duplicate Entry", "This task already exists.")
+        return
+    elif task_name == '':
         messagebox.showinfo('No Task Descriptior', 'Enter task descriptor.')
+        return
+    elif task_name is None:
+        return
     else:
         db.add_task(selected_project_id, task_name)
+        select_project()
         
 
 def del_task():
@@ -139,21 +153,22 @@ def del_task():
 def fetch_tasks(selected_project_id) -> list[dict]:    
     tasks: list[dict] = db.fetch_tasks(selected_project_id)    
     return tasks
-    ...
+    
 
 
-def update_task_display(tasks:list[dict]):
-    print(tasks)
+def update_task_display(tasks:list[dict]) -> None:        
     for item in task_list_tree.get_children():
         task_list_tree.delete(item)
 
     for task in tasks:        
         task_list_tree.insert('', task['task_id'], values=(task['task_description'],), tags=task['task_id'])
-        
-        #checks if item with this id/tag has been in the dictionary before
-        # iid =  task_list_tree.tag_has( task['task_id'])
-        # print('--->', task_list_tree.exists(iid[0]))
-    ...
+   
+    new_task_dict  = dict()
+    for task in tasks:
+        new_task_dict[task['task_description']] = task['task_id']
+    task_list_tree.task_dict = new_task_dict             
+
+    
 #endregion
 
 #region session log related functions
@@ -195,7 +210,7 @@ project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
 project_title_combobox = ttk.Combobox(project_display_frame, textvariable = project_name, state='readonly',height=5, postcommand=click_projects_combobox)
-project_title_combobox.bind('<<ComboboxSelected>>', select_project)
+project_title_combobox.bind('<<ComboboxSelected>>', click_select_project)
 project_title_combobox.pack(side=tk.LEFT, padx=10)
 project_title_combobox.project_dict = dict() #adds project_dict attribute for future reference
 # add project button
@@ -237,6 +252,7 @@ task_list_tree = ttk.Treeview(task_tree_frame,
                               selectmode = "browse",
                               height     = 3)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
+task_list_tree.task_dict = dict() #adds task_dict attribute for future reference
 # scrollbar
 task_list_scrollbar = ttk.Scrollbar(task_tree_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
 task_list_tree.configure(yscrollcommand=task_list_scrollbar.set)
