@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
 from tkinter import messagebox
+
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
@@ -27,6 +28,23 @@ timer_display_delay_in_ms: int = 50
 # initialization
 timer:Timer =Timer() 
 
+#region general functions
+
+def get_id_from_treeview(treeview: ttk.Treeview) -> int | None:
+    '''this assumes the last value in the values list is the id'''     
+    selected_item:str = treeview.focus()
+    selected_item_dict: dict = treeview.item(selected_item)
+    values_list: list = selected_item_dict['values']
+
+    
+    id = values_list[-1]
+    if type(id) is int:
+        print(id)
+        return id
+    else:
+        raise TypeError(f'Last Value {id=} in {treeview=} not of expected type.')
+ 
+#endregion
 
 #region Stopwatch button related functions
 def reset() -> None:
@@ -148,8 +166,15 @@ def add_task():
 #TODO
 def del_task():
     print('delete task button pressed')
-    selected_item = task_list_tree.focus()
-    print(task_list_tree.item(selected_item))
+    
+    try:
+        get_id_from_treeview(task_list_tree)      
+    except IndexError:
+        messagebox.showwarning('No Entry Selected', 'Please select entry')
+    except TypeError as e:
+        messagebox.showerror('Last Value not of expected type', f'{e}')
+    except Exception as e:
+        messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
     ...
 
 
@@ -176,9 +201,16 @@ def add_session():
 #TODO
 def del_session():
     print('delete session button pressed')
-    selected_item = log_tree.focus()
-    print(log_tree.item(selected_item))
+    try:
+        get_id_from_treeview(log_tree)        
+    except IndexError:
+        messagebox.showwarning('No Entry Selected', 'Please select entry')
+    except TypeError as e:
+        messagebox.showerror('Last Value not of expected type', f'{e}')
+    except Exception as e:
+        messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
     ...
+
 
 def fetch_session_logs(selected_project_id):    
     session_logs: list[dict] = db.fetch_sessions(selected_project_id)
@@ -190,7 +222,10 @@ def update_session_log_display(session_logs):
         log_tree.delete(item)
 
     for session in session_logs:
-        log_tree.insert('', session['session_id'], values=(session['session_date'], session['time_spent'], session['task_id'], session['session_id']))
+        log_tree.insert('', session['session_id'], values=(session['session_date'],
+                                                           session['time_spent'],
+                                                           session['task_id'],
+                                                           session['session_id'])) # session_id needs to be last value for get_id_from_treeview
 
 
 #endregion
