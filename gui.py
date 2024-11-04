@@ -148,6 +148,8 @@ def add_task():
 #TODO
 def del_task():
     print('delete task button pressed')
+    selected_item = task_list_tree.focus()
+    print(task_list_tree.item(selected_item))
     ...
 
 
@@ -161,13 +163,8 @@ def update_task_display(tasks:list[dict]) -> None:
         task_list_tree.delete(item)
 
     for task in tasks:        
-        task_list_tree.insert('', task['task_id'], values=(task['task_description'],), tags=task['task_id'])
+        task_list_tree.insert('', task['task_id'], values=(task['task_description'], task['task_id']), tags=task['task_id'])
    
-    new_task_dict  = dict()
-    for task in tasks:
-        new_task_dict[task['task_description']] = task['task_id']
-    task_list_tree.task_dict = new_task_dict             
-
     
 #endregion
 
@@ -176,7 +173,7 @@ def update_task_display(tasks:list[dict]) -> None:
 def add_session():
     print('save button pressed | add session')
     ...
-
+#TODO
 def del_session():
     print('delete session button pressed')
     selected_item = log_tree.focus()
@@ -249,14 +246,14 @@ task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 task_tree_frame = ttk.Frame(task_frame)
 task_tree_frame.pack(side=tk.TOP, padx=10, pady=5)
 # treeview
-task_list_tree_columns = ('ToDo: ',)
+task_list_tree_columns = ('ToDo: ', 'task_id')
 task_list_tree = ttk.Treeview(task_tree_frame,
                               columns    = task_list_tree_columns,
                               show       = "headings",
                               selectmode = "browse",
                               height     = 3)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
-task_list_tree.task_dict = dict() #adds task_dict attribute for future reference
+task_list_tree['displaycolumns'] = ('ToDo: ',)
 # scrollbar
 task_list_scrollbar = ttk.Scrollbar(task_tree_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
 task_list_tree.configure(yscrollcommand=task_list_scrollbar.set)
