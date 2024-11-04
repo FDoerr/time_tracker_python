@@ -13,10 +13,10 @@ import project_handler as db
 #TODO: Functionality to add:
 #     [X] add Project
 #     [X]     -> Populate projects dropdown
-#     [ ]         -> add task
-#     [ ]             -> populate tasks
+#     [X]         -> add task
+#     [X]             -> populate tasks
 #     [ ]                 -> save session | add to log
-#     [ ]                     -> populate logs
+#     [X]                     -> populate logs
 #     [ ]                         -> delete project/task/session
 
 
@@ -31,11 +31,11 @@ timer:Timer =Timer()
 #region general functions
 
 def get_id_from_treeview(treeview: ttk.Treeview) -> int | None:
-    '''this assumes the last value in the values list is the id'''     
+    '''this assumes the last value in the values list is the id'''  
+
     selected_item:str = treeview.focus()
     selected_item_dict: dict = treeview.item(selected_item)
     values_list: list = selected_item_dict['values']
-
     
     id = values_list[-1]
     if type(id) is int:
@@ -94,7 +94,7 @@ def add_project() -> None:
     elif project_name == '':
         messagebox.showinfo('No Project Name', 'Enter project name.')
         return
-    elif project_name is None:
+    elif project_name is None: # if cancel button was pressed
         return
     else:
         db.add_project(project_name)
@@ -149,15 +149,12 @@ def add_task():
     if selected_project_id is None:
         messagebox.showwarning('No Active Project', 'No active project')
         return
-        
+    
     task_name: str | None = simpledialog.askstring('New Task', 'Enter new Task Descriptor: ') 
-    if task_name in task_list_tree.task_dict:
-        messagebox.showwarning("Duplicate Entry", "This task already exists.")
-        return
-    elif task_name == '':
+    if task_name == '':
         messagebox.showinfo('No Task Descriptior', 'Enter task descriptor.')
         return
-    elif task_name is None:
+    elif task_name is None: # if cancel button was pressed
         return
     else:
         db.add_task(selected_project_id, task_name)
@@ -198,6 +195,7 @@ def update_task_display(tasks:list[dict]) -> None:
 def add_session():
     print('save button pressed | add session')
     ...
+
 #TODO
 def del_session():
     print('delete session button pressed')
