@@ -100,7 +100,8 @@ def select_project():
     selected_project_id: int =  get_selected_project()
     tasks: list[dict] = fetch_tasks(selected_project_id)
     update_task_display(tasks)
-    update_session_log_display(selected_project_id)    
+    session_logs: list[dict] = fetch_session_logs(selected_project_id)
+    update_session_log_display(session_logs)    
 
 
 def fetch_projects() -> list[dict]:    
@@ -144,7 +145,7 @@ def add_task():
         db.add_task(selected_project_id, task_name)
         select_project()
         
-
+#TODO
 def del_task():
     print('delete task button pressed')
     ...
@@ -152,10 +153,9 @@ def del_task():
 
 def fetch_tasks(selected_project_id) -> list[dict]:    
     tasks: list[dict] = db.fetch_tasks(selected_project_id)    
-    return tasks
-    
+    return tasks    
 
-
+#TODO: redo this using a hidden column for the task_id
 def update_task_display(tasks:list[dict]) -> None:        
     for item in task_list_tree.get_children():
         task_list_tree.delete(item)
@@ -179,19 +179,23 @@ def add_session():
 
 def del_session():
     print('delete session button pressed')
+    selected_item = log_tree.focus()
+    print(log_tree.item(selected_item))
     ...
 
-def fetch_session_logs():
-    print('fetching session_logs')
-    ...
-
-def update_session_log_display(selected_project_id):
-    print('updating session_log_display')
-    fetch_session_logs()
-    for i in range(1, 10):
-        log_tree.insert('','end', values=(i, i, i))
+def fetch_session_logs(selected_project_id):    
+    session_logs: list[dict] = db.fetch_sessions(selected_project_id)
+    return session_logs
     
-    ...
+
+def update_session_log_display(session_logs):
+    for item in log_tree.get_children():
+        log_tree.delete(item)
+
+    for session in session_logs:
+        log_tree.insert('', session['session_id'], values=(session['session_date'], session['time_spent'], session['task_id'], session['session_id']))
+
+
 #endregion
 
 #region GUI setup
@@ -279,7 +283,7 @@ log_frame.grid(row=6, column=1, padx=10, pady=10)
 log_tree_frame = ttk.Frame(log_frame)
 log_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
 # treeview
-log_tree_column=  ('Date', 'Duration', 'Task')
+log_tree_column=  ('Date', 'Duration', 'Task', 'session_id')
 log_tree = ttk.Treeview(log_tree_frame,
                         columns     = log_tree_column,
                         show        = "headings",
@@ -288,6 +292,7 @@ log_tree = ttk.Treeview(log_tree_frame,
 log_tree.heading(column=log_tree_column[0], text=log_tree_column[0])
 log_tree.heading(column=log_tree_column[1], text=log_tree_column[1])
 log_tree.heading(column=log_tree_column[2], text=log_tree_column[2])
+log_tree['displaycolumns'] = ('Date', 'Duration', 'Task')
 # scrollbar
 log_scrollbar = ttk.Scrollbar(log_tree_frame, orient=tk.VERTICAL, command=log_tree.yview)
 log_tree.configure(yscrollcommand=log_scrollbar.set)
