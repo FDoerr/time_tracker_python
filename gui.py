@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
 from tkinter import messagebox
-
+from datetime import datetime
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
@@ -15,7 +15,7 @@ import project_handler as db
 #     [X]     -> Populate projects dropdown
 #     [X]         -> add task
 #     [X]             -> populate tasks
-#     [ ]                 -> save session | add to log
+#     [X]                 -> save session | add to log
 #     [X]                     -> populate logs
 #     [ ]                         -> delete project/task/session
 
@@ -31,22 +31,30 @@ timer:Timer =Timer()
 #region general functions
 
 def get_id_from_treeview(treeview: ttk.Treeview) -> int | None:
-    '''this assumes the last value in the values list is the id'''  
+    '''
+    returns None if not item is selected
+    returns last item in values of treeview dict
+    this assumes the last value is the id
+    '''
 
     selected_item:str = treeview.focus()
+
+    if selected_item == '': # no item selected
+        return None
+
     selected_item_dict: dict = treeview.item(selected_item)
     values_list: list = selected_item_dict['values']
     
-    id = values_list[-1]
-    if type(id) is int:
-        print(id)
-        return id
-    else:
+    id = values_list[-1]    
+    if type(id) is not int:
         raise TypeError(f'Last Value {id=} in {treeview=} not of expected type.')
- 
+        
+    return id
+
 #endregion
 
 #region Stopwatch button related functions
+
 def reset() -> None:
     timer.stop()
     timer.reset()
@@ -59,6 +67,7 @@ def press_timer_button() -> None:
     else:
         timer.start()
         update_timer_display()
+
 
 def update_timer_display() -> None:
         
@@ -81,6 +90,7 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
     minutes = int((elapsed_time_in_s % 3600) / 60)  
     seconds = int(elapsed_time_in_s  % 60)
     return hours, minutes, seconds
+
  #endregion
 
 
@@ -98,7 +108,8 @@ def add_project() -> None:
         return
     else:
         db.add_project(project_name)
-    
+
+
 #TODO
 def del_project():
     print('Delete Project Button pressed')
@@ -147,7 +158,7 @@ def click_projects_combobox() -> None:
 def add_task():
     selected_project_id: int = get_selected_project()    
     if selected_project_id is None:
-        messagebox.showwarning('No Active Project', 'No active project')
+        messagebox.showwarning('No Active Project', 'Please select project')
         return
     
     task_name: str | None = simpledialog.askstring('New Task', 'Enter new Task Descriptor: ') 
@@ -165,21 +176,22 @@ def del_task():
     print('delete task button pressed')
     
     try:
-        get_id_from_treeview(task_list_tree)      
-    except IndexError:
-        messagebox.showwarning('No Entry Selected', 'Please select entry')
+        task_id: int | None =  get_id_from_treeview(task_list_tree)
+        if task_id == None:
+            messagebox.showwarning('No Task Selected', 'Please select task')
+            return      
+        
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
-    ...
 
 
 def fetch_tasks(selected_project_id) -> list[dict]:    
     tasks: list[dict] = db.fetch_tasks(selected_project_id)    
     return tasks    
 
-#TODO: redo this using a hidden column for the task_id
+
 def update_task_display(tasks:list[dict]) -> None:        
     for item in task_list_tree.get_children():
         task_list_tree.delete(item)
@@ -191,30 +203,59 @@ def update_task_display(tasks:list[dict]) -> None:
 #endregion
 
 #region session log related functions
-#TODO
-def add_session():
-    print('save button pressed | add session')
-    ...
+
+def add_session() -> None:
+
+    if timer.running: 
+        press_timer_button() # pause timer    
+
+    project_id: int = get_selected_project()
+    if project_id is None:
+        messagebox.showinfo('No Active Project', 'Please select project')
+        return    
+    
+    date: str = datetime.now().strftime('%d.%m.%y %H:%M:%S')    
+        
+    time_spent = timer.get_elapsed_time()
+
+    task_id: int | None = None    
+    try:
+        task_id = get_id_from_treeview(task_list_tree) 
+    except TypeError as e:
+        messagebox.showerror('Last Value not of expected type', f'{e}')
+        return
+    except Exception as e:
+        messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
+        return    
+    if task_id == None:
+            messagebox.showwarning('No Task Selected', 'Please select task')
+            return  
+            
+    db.add_session(project_id, date, time_spent, task_id)
+    select_project() 
+    
 
 #TODO
 def del_session():
     print('delete session button pressed')
     try:
-        get_id_from_treeview(log_tree)        
-    except IndexError:
-        messagebox.showwarning('No Entry Selected', 'Please select entry')
+        session_log_id: int | None =  get_id_from_treeview(log_tree)
+        if session_log_id == None:
+            messagebox.showwarning('No Session Selected', 'Please select session')
+            return      
+        
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
-    ...
 
 
 def fetch_session_logs(selected_project_id):    
     session_logs: list[dict] = db.fetch_sessions(selected_project_id)
     return session_logs
     
-
+    
+#TODO: make time_spent more readable
 def update_session_log_display(session_logs):
     for item in log_tree.get_children():
         log_tree.delete(item)
