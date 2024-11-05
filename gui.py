@@ -18,6 +18,7 @@ import project_handler as db
 #     [X]                 -> save session | add to log
 #     [X]                     -> populate logs
 #     [ ]                         -> delete project/task/session
+#     [ ]                               -> make logs more readable (task_id and time_spent)
 
 
 # global variables
@@ -171,16 +172,18 @@ def add_task():
         db.add_task(selected_project_id, task_name)
         select_project()
         
-#TODO
+#TODO: deleting task deletes log in DB (change cascading in db), also messes with assignment of task_id to task_name
+#           -> ommit delete functionality? modify entries with button instead?
+#           -> or mark tasks as deleted in DB and only show non deleted ones?
+#           -> delete them with trigger if no session log references them anymore?
 def del_task():
-    print('delete task button pressed')
-    
     try:
         task_id: int | None =  get_id_from_treeview(task_list_tree)
         if task_id == None:
             messagebox.showwarning('No Task Selected', 'Please select task')
-            return      
-        
+            return
+        db.del_task(task_id)
+        select_project()
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
@@ -235,14 +238,14 @@ def add_session() -> None:
     select_project() 
     
 
-#TODO
 def del_session():
-    print('delete session button pressed')
     try:
         session_log_id: int | None =  get_id_from_treeview(log_tree)
         if session_log_id == None:
             messagebox.showwarning('No Session Selected', 'Please select session')
             return      
+        db.del_session(session_log_id)
+        select_project()
         
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
@@ -254,7 +257,7 @@ def fetch_session_logs(selected_project_id):
     session_logs: list[dict] = db.fetch_sessions(selected_project_id)
     return session_logs
     
-    
+
 #TODO: make time_spent more readable
 def update_session_log_display(session_logs):
     for item in log_tree.get_children():
