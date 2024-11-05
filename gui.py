@@ -122,11 +122,11 @@ def get_selected_project() -> int:
     return selected_project_id
     
     
-def click_select_project(event):
-    select_project()
+def click_update_task_and_session_display(event):
+    update_task_and_session_display()
 
 
-def select_project():      
+def update_task_and_session_display():      
     selected_project_id: int =  get_selected_project()
     tasks: list[dict] = fetch_tasks(selected_project_id)
     update_task_display(tasks)
@@ -170,7 +170,7 @@ def add_task():
         return
     else:
         db.add_task(selected_project_id, task_name)
-        select_project()
+        update_task_and_session_display()
         
 #TODO: deleting task deletes log in DB (change cascading in db), also messes with assignment of task_id to task_name
 #           -> ommit delete functionality? modify entries with button instead?
@@ -183,7 +183,7 @@ def del_task():
             messagebox.showwarning('No Task Selected', 'Please select task')
             return
         db.del_task(task_id)
-        select_project()
+        update_task_and_session_display()
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
@@ -235,7 +235,7 @@ def add_session() -> None:
             return  
             
     db.add_session(project_id, date, time_spent, task_id)
-    select_project() 
+    update_task_and_session_display() 
     
 
 def del_session():
@@ -245,7 +245,7 @@ def del_session():
             messagebox.showwarning('No Session Selected', 'Please select session')
             return      
         db.del_session(session_log_id)
-        select_project()
+        update_task_and_session_display()
         
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
@@ -288,7 +288,7 @@ project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
 project_title_combobox = ttk.Combobox(project_display_frame, textvariable = project_name, state='readonly',height=5, postcommand=click_projects_combobox)
-project_title_combobox.bind('<<ComboboxSelected>>', click_select_project)
+project_title_combobox.bind('<<ComboboxSelected>>', click_update_task_and_session_display)
 project_title_combobox.pack(side=tk.LEFT, padx=10)
 project_title_combobox.project_dict = dict() #adds project_dict attribute for future reference
 # add project button
