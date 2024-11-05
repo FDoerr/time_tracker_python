@@ -96,7 +96,7 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 
 
 #region project related functions
-
+#TODO: automatically select new project
 def add_project() -> None: 
     project_name: str | None = simpledialog.askstring('New Project', 'Enter new project name: ')
     if project_name in project_title_combobox.project_dict:
@@ -111,9 +111,20 @@ def add_project() -> None:
         db.add_project(project_name)
 
 
-#TODO
+#TODO: change the selected project to a different one after deleting, to prevent adding tasks for deleted project
 def del_project():
-    print('Delete Project Button pressed')
+    print('Delete Project Button pressed')    
+    selected_project_id = get_selected_project()
+    if selected_project_id is None:
+        messagebox.showwarning('No Active Project', 'Please select project')
+        return
+    
+    confirmation = messagebox.askyesno('Delete Project', 'Do you really want to delete the project?\nThis also deletes all associated session logs and tasks')
+    if confirmation == True: 
+        db.del_project(selected_project_id)
+        update_task_and_session_display()
+    else:
+        return 
     ...
 
 
@@ -157,7 +168,7 @@ def click_projects_combobox() -> None:
 
 #region task list related functions
 def add_task():
-    selected_project_id: int = get_selected_project()    
+    selected_project_id: int = get_selected_project()     
     if selected_project_id is None:
         messagebox.showwarning('No Active Project', 'Please select project')
         return
@@ -171,6 +182,7 @@ def add_task():
     else:
         db.add_task(selected_project_id, task_name)
         update_task_and_session_display()
+
         
 #TODO: deleting task deletes log in DB (change cascading in db), also messes with assignment of task_id to task_name
 #           -> ommit delete functionality? modify entries with button instead?
