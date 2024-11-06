@@ -114,7 +114,6 @@ def add_project() -> None:
 
 
 def del_project():
-    print('Delete Project Button pressed')    
     selected_project_id = get_selected_project()
     if selected_project_id is None:
         messagebox.showwarning('No Active Project', 'Please select project')
@@ -191,7 +190,7 @@ def add_task():
         update_task_and_session_display()
 
         
-#TODO: deleting task deletes log in DB (change cascading in db), also messes with assignment of task_id to task_name
+#TODO:  throws sql Integrity Error Foreign Key constraint failed
 #           -> ommit delete functionality? modify entries with button instead?
 #           -> or mark tasks as deleted in DB and only show non deleted ones?
 #           -> delete them with trigger if no session log references them anymore?
@@ -202,7 +201,7 @@ def del_task():
             messagebox.showwarning('No Task Selected', 'Please select task')
             return
         db.del_task(task_id)
-        update_task_and_session_display()
+        update_task_and_session_display()    
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
