@@ -130,8 +130,10 @@ def del_project():
 
 def select_last_project_in_dropdown():
     click_projects_combobox()
-    projects =project_title_combobox['values']    
-    project_title_combobox.set(projects[-1])
+    projects =project_title_combobox['values']   
+    
+    if projects != '': #prevent index error when only one project exists and gets deleted
+        project_title_combobox.set(projects[-1])
 
 
 def get_selected_project() -> int:
@@ -207,6 +209,7 @@ def del_task():
     except Exception as e:
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
         ...
+
 
 def fetch_tasks(selected_project_id) -> list[dict]:    
     tasks: list[dict] = db.fetch_tasks(selected_project_id)    
