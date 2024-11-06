@@ -10,7 +10,7 @@ from timer import Timer
 import project_handler as db
 #TODO: change to this style: https://ttkbootstrap.readthedocs.io/en/version-0.5/tutorial.html
 #TODO: editable Treeview cells: https://www.youtube.com/watch?v=n5gItcGgIkk
-#TODO: total time spent label functionality
+
 #TODO: Functionality to add:
 #     [X] add Project
 #     [X]     -> Populate projects dropdown
@@ -93,6 +93,25 @@ def update_timer_display() -> None:
         root.after(timer_display_delay_in_ms, update_timer_display) #call function after 100ms, keeps UI Responsive
     else:
        session_time_button.config(text=f"⏵ {formated_time}") 
+    
+    update_total_time_display()
+
+
+def update_total_time_display() -> None:
+    # get time from timer
+    elapsed_time: int = timer.get_elapsed_time()  
+    # fetch total time from session logs
+    # add them up
+    for item in log_tree.get_children():
+        elapsed_time += int(log_tree.item(item)['values'][-3])
+
+    # convert them to formated string           
+    hours, minutes, seconds  = calculate_hours_minutes_seconds(elapsed_time)
+    formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"    
+    # display string
+    total_time.set(formated_time)
+  
+
 
  #endregion
 
@@ -162,6 +181,7 @@ def update_task_and_session_display() -> None:
     update_task_display(tasks)
     session_logs: list[dict] = fetch_session_logs(selected_project_id)
     update_session_log_display(session_logs)  
+    update_total_time_display()
 
 
 def click_update_task_and_session_display(event) -> None: # handles the event
