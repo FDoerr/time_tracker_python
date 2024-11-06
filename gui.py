@@ -129,35 +129,15 @@ def del_project() -> None:
         return 
     
 
-def select_last_project_in_dropdown() -> None:
-    click_projects_combobox() # to refresh combobox values
-    projects = project_title_combobox['values']   
-    
-    if projects != '': #prevent index error when only one project exists and gets deleted
-        project_title_combobox.set(projects[-1])
-
-
-def get_selected_project() -> int:
-    selected_project_id: int =  project_title_combobox.project_dict.get(project_title_combobox.get())
-    return selected_project_id
-    
-    
-def click_update_task_and_session_display(event) -> None: # handles the event
-    update_task_and_session_display()
-
-
-def update_task_and_session_display() -> None:      
-    selected_project_id: int =  get_selected_project()
-    tasks: list[dict] = fetch_tasks(selected_project_id)
-    update_task_display(tasks)
-    session_logs: list[dict] = fetch_session_logs(selected_project_id)
-    update_session_log_display(session_logs)    
-
-
 def fetch_projects() -> list[dict]:    
     projects: list[dict] = db.fetch_projects()    
     return projects
-    
+
+
+def click_projects_combobox() -> None:    
+    projects: list[dict] = fetch_projects()
+    update_projects_display(projects)
+
 
 def update_projects_display(projects:list[dict]) -> None:
     new_project_dict = dict()
@@ -168,10 +148,29 @@ def update_projects_display(projects:list[dict]) -> None:
     project_title_combobox.project_dict = new_project_dict #"reverse" dict for referencing id from name
 
 
-def click_projects_combobox() -> None:    
-    projects: list[dict] = fetch_projects()
-    update_projects_display(projects)
+def select_last_project_in_dropdown() -> None:
+    click_projects_combobox() # to refresh combobox values
+    projects = project_title_combobox['values']   
     
+    if projects != '': #prevent index error when only one project exists and gets deleted
+        project_title_combobox.set(projects[-1])
+
+
+def update_task_and_session_display() -> None:      
+    selected_project_id: int =  get_selected_project()
+    tasks: list[dict] = fetch_tasks(selected_project_id)
+    update_task_display(tasks)
+    session_logs: list[dict] = fetch_session_logs(selected_project_id)
+    update_session_log_display(session_logs)  
+
+
+def click_update_task_and_session_display(event) -> None: # handles the event
+    update_task_and_session_display()
+
+
+def get_selected_project() -> int:
+    selected_project_id: int =  project_title_combobox.project_dict.get(project_title_combobox.get())
+    return selected_project_id 
 
 #endregion
 
