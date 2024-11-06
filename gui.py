@@ -17,8 +17,9 @@ import project_handler as db
 #     [X]             -> populate tasks
 #     [X]                 -> save session | add to log
 #     [X]                     -> populate logs
-#     [ ]                         -> delete project/task/session
+#     [X]                         -> delete project/session
 #     [ ]                               -> make logs more readable (task_id and time_spent)
+#     [ ]                                   -> change del task to tag as deleted but don't delete
 
 
 # global variables
@@ -96,7 +97,6 @@ def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, in
 
 
 #region project related functions
-#TODO: automatically select new project
 def add_project() -> None: 
     project_name: str | None = simpledialog.askstring('New Project', 'Enter new project name: ')
     if project_name in project_title_combobox.project_dict:
@@ -109,9 +109,10 @@ def add_project() -> None:
         return
     else:
         db.add_project(project_name)
+        select_last_project_in_dropdown()
+        update_task_and_session_display()
 
 
-#TODO: change the selected project to a different one after deleting, to prevent adding tasks for deleted project
 def del_project():
     print('Delete Project Button pressed')    
     selected_project_id = get_selected_project()
@@ -119,13 +120,19 @@ def del_project():
         messagebox.showwarning('No Active Project', 'Please select project')
         return
     
-    confirmation = messagebox.askyesno('Delete Project', 'Do you really want to delete the project?\nThis also deletes all associated session logs and tasks')
+    confirmation = messagebox.askyesno('Delete Project', 'Do you really want to delete the project?\nThis will also deletes all associated session logs and tasks')
     if confirmation == True: 
         db.del_project(selected_project_id)
+        select_last_project_in_dropdown()
         update_task_and_session_display()
     else:
         return 
-    ...
+    
+
+def select_last_project_in_dropdown():
+    click_projects_combobox()
+    projects =project_title_combobox['values']    
+    project_title_combobox.set(projects[-1])
 
 
 def get_selected_project() -> int:
@@ -200,7 +207,7 @@ def del_task():
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
-
+        ...
 
 def fetch_tasks(selected_project_id) -> list[dict]:    
     tasks: list[dict] = db.fetch_tasks(selected_project_id)    
