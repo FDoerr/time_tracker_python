@@ -132,7 +132,7 @@ def create_sessions_table() -> None:
                                             time_spent      INTEGER NOT NULL,
                                             task_id         INTEGER,
                                             FOREIGN KEY (project_id) REFERENCES projects (project_id)   ON DELETE CASCADE
-                                            FOREIGN KEY (task_id)    REFERENCES tasks (task_id)         ON DELETE CASCADE
+                                            FOREIGN KEY (task_id)    REFERENCES tasks (task_id)
                                             );
                                     '''
 
