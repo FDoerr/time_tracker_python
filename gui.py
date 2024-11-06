@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import simpledialog
 from tkinter import messagebox
 from datetime import datetime
+import time
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
@@ -18,9 +19,9 @@ import project_handler as db
 #     [X]                 -> save session | add to log
 #     [X]                     -> populate logs
 #     [X]                         -> delete project/session
-#     [ ]                               -> make logs more readable (task_id and time_spent)
+#     [X]                               -> make logs more readable (task_id and time_spent)
 #     [ ]                                   -> change del task to tag as deleted but don't delete
-
+#     [ ]                                       -> mark tasks as done
 
 # global variables
 timer_button_default_text: str = '⏺ start timer '
@@ -192,7 +193,7 @@ def add_task():
         update_task_and_session_display()
 
         
-#TODO:  throws sql Integrity Error Foreign Key constraint failed
+#TODO:  throws sql Integrity Error Foreign Key constraint failed, when deleting task that is also in session log
 #           -> ommit delete functionality? modify entries with button instead?
 #           -> or mark tasks as deleted in DB and only show non deleted ones?
 #           -> delete them with trigger if no session log references them anymore?
@@ -208,7 +209,7 @@ def del_task():
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
-        ...
+        
 
 
 def fetch_tasks(selected_project_id) -> list[dict]:    
@@ -279,17 +280,39 @@ def fetch_session_logs(selected_project_id):
     return session_logs
     
 
-#TODO: make time_spent more readable
 def update_session_log_display(session_logs):
     for item in log_tree.get_children():
         log_tree.delete(item)
 
-    for session in session_logs:
+    for session in session_logs:        
+        # format time
+        time_spent: int = session['time_spent']        
+        hours, minutes, seconds = calculate_hours_minutes_seconds(time_spent)
+        formated_time: str = f'{hours:02}h {minutes:02}m {seconds:02}s '        
+        
+        # assign task_name to id
+        task_name:str | None = None
+        for item in task_list_tree.get_children():
+
+            task_name_to_id_list: list = task_list_tree.item(item)['values']            
+            task_id_in_list:      int  = task_name_to_id_list[1]
+            
+            if session['task_id'] == task_id_in_list:
+                task_name = task_list_tree.item(item)['values'][0]
+                
+        if task_name is None:
+            task_name = 'unknown task descriptor'
+
+        # add to treeview
+        # log_tree_column =  ('Date', 'Duration', 'Task', 'time_spent_in_s', 'task_id', 'session_id')
+        # last 3 columns not displayed
         log_tree.insert('', session['session_id'], values=(session['session_date'],
+                                                           formated_time,
+                                                           task_name,                                                           
                                                            session['time_spent'],
                                                            session['task_id'],
                                                            session['session_id'])) # session_id needs to be last value for get_id_from_treeview
-
+        
 
 #endregion
 
@@ -378,7 +401,7 @@ log_frame.grid(row=6, column=1, padx=10, pady=10)
 log_tree_frame = ttk.Frame(log_frame)
 log_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
 # treeview
-log_tree_column=  ('Date', 'Duration', 'Task', 'session_id')
+log_tree_column=  ('Date', 'Duration', 'Task', 'time_spent_in_s', 'task_id', 'session_id')
 log_tree = ttk.Treeview(log_tree_frame,
                         columns     = log_tree_column,
                         show        = "headings",
