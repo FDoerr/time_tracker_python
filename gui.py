@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import simpledialog
 from tkinter import messagebox
 from datetime import datetime
-import time
+
 import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
 
 from timer import Timer
@@ -31,7 +31,15 @@ timer_display_delay_in_ms: int = 50
 # initialization
 timer:Timer =Timer() 
 
+
 #region general functions
+
+def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, int]:
+    hours:   int = int( elapsed_time_in_s / 3600)  
+    minutes: int = int((elapsed_time_in_s % 3600) / 60)  
+    seconds: int = int(elapsed_time_in_s  % 60)
+    return hours, minutes, seconds
+
 
 def get_id_from_treeview(treeview: ttk.Treeview) -> int | None:
     '''
@@ -41,14 +49,12 @@ def get_id_from_treeview(treeview: ttk.Treeview) -> int | None:
     '''
 
     selected_item:str = treeview.focus()
-
     if selected_item == '': # no item selected
         return None
 
     selected_item_dict: dict = treeview.item(selected_item)
-    values_list: list = selected_item_dict['values']
-    
-    id = values_list[-1]    
+    values_list: list        = selected_item_dict['values']    
+    id: int                  = values_list[-1]    
     if type(id) is not int:
         raise TypeError(f'Last Value {id=} in {treeview=} not of expected type.')
         
@@ -74,25 +80,19 @@ def press_timer_button() -> None:
 
 def update_timer_display() -> None:
         
-        if timer.was_reset: #prevents timer_display from updating to 00:00:00 when reset while running
-            return
-        
-        elapsed_time: int = timer.get_elapsed_time()        
-        hours, minutes, seconds = calculate_hours_minutes_seconds(elapsed_time)
-        formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"
+    if timer.was_reset: #prevents timer_display from updating to 00:00:00 when reset while running
+        return
+    
+    elapsed_time: int = timer.get_elapsed_time()        
+    hours, minutes, seconds  = calculate_hours_minutes_seconds(elapsed_time)
+    formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"
 
-        if timer.running:
-            session_time_button.config(text=f"⏸ {formated_time}") # ⏵⏸ ⏯ ⏺
-            root.after(timer_display_delay_in_ms, update_timer_display) #call function after 100ms, keeps UI Responsive
-        else:
-           session_time_button.config(text=f"⏵ {formated_time}") 
-      
-
-def calculate_hours_minutes_seconds(elapsed_time_in_s:int) -> tuple[int, int, int]:
-    hours   = int( elapsed_time_in_s / 3600)  
-    minutes = int((elapsed_time_in_s % 3600) / 60)  
-    seconds = int(elapsed_time_in_s  % 60)
-    return hours, minutes, seconds
+    # toggle displayed symbol ⏺ ⏵⏸ ⏯ 
+    if timer.running:
+        session_time_button.config(text=f"⏸ {formated_time}")
+        root.after(timer_display_delay_in_ms, update_timer_display) #call function after 100ms, keeps UI Responsive
+    else:
+       session_time_button.config(text=f"⏵ {formated_time}") 
 
  #endregion
 
@@ -114,13 +114,13 @@ def add_project() -> None:
         update_task_and_session_display()
 
 
-def del_project():
-    selected_project_id = get_selected_project()
+def del_project() -> None:
+    selected_project_id: int = get_selected_project()
     if selected_project_id is None:
         messagebox.showwarning('No Active Project', 'Please select project')
         return
     
-    confirmation = messagebox.askyesno('Delete Project', 'Do you really want to delete the project?\nThis will also deletes all associated session logs and tasks')
+    confirmation: bool = messagebox.askyesno('Delete Project', 'Do you really want to delete the project?\nThis will also deletes all associated session logs and tasks')
     if confirmation == True: 
         db.del_project(selected_project_id)
         select_last_project_in_dropdown()
@@ -129,9 +129,9 @@ def del_project():
         return 
     
 
-def select_last_project_in_dropdown():
-    click_projects_combobox()
-    projects =project_title_combobox['values']   
+def select_last_project_in_dropdown() -> None:
+    click_projects_combobox() # to refresh combobox values
+    projects = project_title_combobox['values']   
     
     if projects != '': #prevent index error when only one project exists and gets deleted
         project_title_combobox.set(projects[-1])
@@ -142,11 +142,11 @@ def get_selected_project() -> int:
     return selected_project_id
     
     
-def click_update_task_and_session_display(event):
+def click_update_task_and_session_display(event) -> None: # handles the event
     update_task_and_session_display()
 
 
-def update_task_and_session_display():      
+def update_task_and_session_display() -> None:      
     selected_project_id: int =  get_selected_project()
     tasks: list[dict] = fetch_tasks(selected_project_id)
     update_task_display(tasks)
@@ -164,7 +164,7 @@ def update_projects_display(projects:list[dict]) -> None:
     for project in projects:
         new_project_dict[project['project_name']] = project['project_id'] # using the name as a key, is easier for finding ID
     
-    project_title_combobox['values'] = list(new_project_dict.keys())
+    project_title_combobox['values']    = list(new_project_dict.keys())
     project_title_combobox.project_dict = new_project_dict #"reverse" dict for referencing id from name
 
 
@@ -176,7 +176,7 @@ def click_projects_combobox() -> None:
 #endregion
 
 #region task list related functions
-def add_task():
+def add_task() -> None:
     selected_project_id: int = get_selected_project()     
     if selected_project_id is None:
         messagebox.showwarning('No Active Project', 'Please select project')
@@ -194,10 +194,10 @@ def add_task():
 
         
 #TODO:  throws sql Integrity Error Foreign Key constraint failed, when deleting task that is also in session log
-#           -> ommit delete functionality? modify entries with button instead?
+#           -> ommit delete functionality?
 #           -> or mark tasks as deleted in DB and only show non deleted ones?
 #           -> delete them with trigger if no session log references them anymore?
-def del_task():
+def del_task() -> None:
     try:
         task_id: int | None =  get_id_from_treeview(task_list_tree)
         if task_id == None:
@@ -230,7 +230,6 @@ def update_task_display(tasks:list[dict]) -> None:
 #region session log related functions
 
 def add_session() -> None:
-
     if timer.running: 
         press_timer_button() # pause timer    
 
@@ -239,9 +238,8 @@ def add_session() -> None:
         messagebox.showinfo('No Active Project', 'Please select project')
         return    
     
-    date: str = datetime.now().strftime('%d.%m.%y %H:%M:%S')    
-        
-    time_spent = timer.get_elapsed_time()
+    date: str       = datetime.now().strftime('%d.%m.%y %H:%M:%S')        
+    time_spent: int = timer.get_elapsed_time()
 
     task_id: int | None = None    
     try:
@@ -260,7 +258,7 @@ def add_session() -> None:
     update_task_and_session_display() 
     
 
-def del_session():
+def del_session() -> None:
     try:
         session_log_id: int | None =  get_id_from_treeview(log_tree)
         if session_log_id == None:
@@ -275,12 +273,12 @@ def del_session():
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
 
 
-def fetch_session_logs(selected_project_id):    
+def fetch_session_logs(selected_project_id) -> list[dict]:   
     session_logs: list[dict] = db.fetch_sessions(selected_project_id)
     return session_logs
     
 
-def update_session_log_display(session_logs):
+def update_session_log_display(session_logs) -> None:
     for item in log_tree.get_children():
         log_tree.delete(item)
 
@@ -331,17 +329,26 @@ project_display_frame = ttk.Frame(root)
 project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
 # project_title_combobox
 project_name = tk.StringVar(value= 'Project name')
-project_title_combobox = ttk.Combobox(project_display_frame, textvariable = project_name, state='readonly',height=5, postcommand=click_projects_combobox)
+project_title_combobox = ttk.Combobox(project_display_frame,
+                                      textvariable = project_name,
+                                      state        = 'readonly',
+                                      height       = 5,
+                                      postcommand  = click_projects_combobox)
 project_title_combobox.bind('<<ComboboxSelected>>', click_update_task_and_session_display)
 project_title_combobox.pack(side=tk.LEFT, padx=10)
 project_title_combobox.project_dict = dict() #adds project_dict attribute for future reference
 # add project button
-add_project_button = ttk.Button(project_display_frame, text='Add Project', command=add_project)
+add_project_button = ttk.Button(project_display_frame,
+                                text    = 'Add Project',
+                                command = add_project)
 add_project_button.pack(side=tk.LEFT, padx=10)
 # delete project button
-delete_project_button = ttk.Button(project_display_frame, text='delete Project', command=del_project)
+delete_project_button = ttk.Button(project_display_frame,
+                                   text    = 'delete Project',
+                                   command = del_project)
 delete_project_button.pack(side=tk.LEFT, padx=10)
 #endregion
+
 
 #region total time label UI Elements
 # subframe to group total time labels
@@ -358,7 +365,6 @@ total_time_label.pack(padx = 10, pady = 10)
 #endregion
 
 
-
 #region todo list UI Elements
 # frame for treeview & scrollbar
 task_frame = ttk.Frame(root)
@@ -367,7 +373,7 @@ task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 task_tree_frame = ttk.Frame(task_frame)
 task_tree_frame.pack(side=tk.TOP, padx=10, pady=5)
 # treeview
-task_list_tree_columns = ('ToDo: ', 'task_id')
+task_list_tree_columns: tuple = ('ToDo: ', 'task_id')
 task_list_tree = ttk.Treeview(task_tree_frame,
                               columns    = task_list_tree_columns,
                               show       = "headings",
@@ -376,7 +382,9 @@ task_list_tree = ttk.Treeview(task_tree_frame,
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
 task_list_tree['displaycolumns'] = ('ToDo: ',)
 # scrollbar
-task_list_scrollbar = ttk.Scrollbar(task_tree_frame, orient=tk.VERTICAL, command=task_list_tree.yview)
+task_list_scrollbar = ttk.Scrollbar(task_tree_frame,
+                                    orient  = tk.VERTICAL,
+                                    command = task_list_tree.yview)
 task_list_tree.configure(yscrollcommand=task_list_scrollbar.set)
 # Place  treeview and scrollbar
 task_list_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -385,10 +393,14 @@ task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 task_button_frame = ttk.Frame(task_frame)
 task_button_frame.pack(side=tk.BOTTOM, padx=0, pady=5)
 # add task button
-add_task_button = ttk.Button(task_button_frame, text='Add Task', command=add_task)
+add_task_button = ttk.Button(task_button_frame,
+                             text    = 'Add Task',
+                             command = add_task)
 add_task_button.pack(side=tk.LEFT, padx=5, pady=5)
 # delete task button
-delete_task_button = ttk.Button(task_button_frame, text='Delete Task', command=del_task)
+delete_task_button = ttk.Button(task_button_frame,
+                                text    = 'Delete Task',
+                                command = del_task)
 delete_task_button.pack(side=tk.RIGHT, padx=5, pady=5)
 #endregion
 
@@ -401,33 +413,45 @@ log_frame.grid(row=6, column=1, padx=10, pady=10)
 log_tree_frame = ttk.Frame(log_frame)
 log_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
 # treeview
-log_tree_column=  ('Date', 'Duration', 'Task', 'time_spent_in_s', 'task_id', 'session_id')
+log_tree_column=  ('Date',
+                                                    'Duration',
+                                                    'Task',
+                                                    'time_spent_in_s',
+                                                    'task_id',
+                                                    'session_id')
 log_tree = ttk.Treeview(log_tree_frame,
-                        columns     = log_tree_column,
-                        show        = "headings",
-                        selectmode  = tk.BROWSE,
-                        height      = 4)
+                        columns    = log_tree_column,
+                        show       = "headings",
+                        selectmode = tk.BROWSE,
+                        height     = 4)
 log_tree.heading(column=log_tree_column[0], text=log_tree_column[0])
 log_tree.heading(column=log_tree_column[1], text=log_tree_column[1])
 log_tree.heading(column=log_tree_column[2], text=log_tree_column[2])
 log_tree['displaycolumns'] = ('Date', 'Duration', 'Task')
 # scrollbar
-log_scrollbar = ttk.Scrollbar(log_tree_frame, orient=tk.VERTICAL, command=log_tree.yview)
+log_scrollbar = ttk.Scrollbar(log_tree_frame,
+                              orient=tk.VERTICAL,
+                              command=log_tree.yview)
 log_tree.configure(yscrollcommand=log_scrollbar.set)
 # Place  treeview and scrollbar
 log_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 log_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 #delete session button
-delete_session_button = ttk.Button(log_frame, text = 'Delete Session', command= del_session)
+delete_session_button = ttk.Button(log_frame,
+                                   text    = 'Delete Session',
+                                   command = del_session)
 delete_session_button.pack(side=tk.BOTTOM, padx=5, pady=5)
 #endregion
+
 
 #region Timer Button UI Elements
 # reset & save frame
 frame_reset_save = ttk.Frame(root)
 frame_reset_save.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
 # session_time_button
-session_time_button = ttk.Button(frame_reset_save, text = timer_button_default_text , command = press_timer_button)
+session_time_button = ttk.Button(frame_reset_save,
+                                 text    = timer_button_default_text,
+                                 command = press_timer_button)
 session_time_button.pack(side=tk.LEFT, padx = 10, pady = 10, fill=tk.BOTH)
 # reset_button
 reset_button = ttk.Button(frame_reset_save, text = 'Reset', command = reset)
@@ -437,4 +461,4 @@ save_button = ttk.Button(frame_reset_save, text = 'Save', command=add_session)
 save_button.pack(side=tk.TOP, padx = 10, pady = 10)
 #endregion
 
-#endregion
+#endregion GUI setup
