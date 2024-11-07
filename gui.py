@@ -98,19 +98,15 @@ def update_timer_display() -> None:
 
 
 def update_total_time_display() -> None:
-    # get time from timer
-    elapsed_time: int = timer.get_elapsed_time()  
-    # fetch total time from session logs
-    # add them up
+
+    elapsed_time: int = timer.get_elapsed_time()
     for item in log_tree.get_children():
         elapsed_time += int(log_tree.item(item)['values'][-3])
 
-    # convert them to formated string           
     hours, minutes, seconds  = calculate_hours_minutes_seconds(elapsed_time)
     formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"    
-    # display string
-    total_time.set(formated_time)
-  
+
+    total_time.set(formated_time)  
 
 
  #endregion
