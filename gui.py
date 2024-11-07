@@ -241,9 +241,18 @@ def update_task_display(tasks:list[dict]) -> None:
     for item in task_list_tree.get_children():
         task_list_tree.delete(item)
 
-    for task in tasks:        
-        task_list_tree.insert('', task['task_id'], values=(task['task_description'], task['task_id']), tags=task['task_id'])
-   
+    #task_list_tree_columns: tuple = ('Done: ', 'ToDo: ', 'task_done', 'task_id')
+    for task in tasks:          
+        if task['task_done'] == 1:
+            done_str:str = '✓'  
+        else:
+            done_str = '' 
+
+        task_list_tree.insert('', task['task_id'], values=(done_str,
+                                                           task['task_description'],
+                                                           task['task_done'],
+                                                           task['task_id']))
+
     
 #endregion
 
@@ -400,9 +409,9 @@ task_list_tree = ttk.Treeview(task_tree_frame,
                               selectmode = "browse",
                               height     = 3)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
-task_list_tree.heading(column='Done: ', text='Done: ')
+task_list_tree.heading(column='Done: ', text='✓')
 task_list_tree.column('ToDo: ', width=175)
-task_list_tree.column('Done: ', width=40)
+task_list_tree.column('Done: ', width=35, anchor=tk.CENTER)
 task_list_tree['displaycolumns'] = ('Done: ', 'ToDo: ')
 # scrollbar
 task_list_scrollbar = ttk.Scrollbar(task_tree_frame,
@@ -441,7 +450,7 @@ log_frame.grid(row=6, column=1, padx=10, pady=10)
 log_tree_frame = ttk.Frame(log_frame)
 log_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
 # treeview
-log_tree_column=  ('Date',
+log_tree_column=  ( 'Date',
                                                     'Duration',
                                                     'Task',
                                                     'time_spent_in_s',
