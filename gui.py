@@ -215,19 +215,19 @@ def add_task() -> None:
 def del_task() -> None:
     try:
         task_id: int | None =  get_id_from_treeview(task_list_tree)
-        if task_id == None: #TODO: change this to task_id is None:
+        if task_id is None: #TODO:
             messagebox.showwarning('No Task Selected', 'Please select task')
             return
         db.del_task(task_id)
         update_task_and_session_display()    
+        
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
         
 
-def toggle_task_done() -> None:
-    
+def toggle_task_done() -> None:    
     try:
         task_id: int|None   =  get_id_from_treeview(task_list_tree) 
         task_done: bool|None = get_task_done_from_treeview(task_list_tree)
@@ -237,7 +237,8 @@ def toggle_task_done() -> None:
             return
                 
         db.update_task(task_id, new_task_done = not task_done)
-        update_task_and_session_display()    
+        update_task_and_session_display()  
+
     except TypeError as e:
         messagebox.showerror('Last Value not of expected type', f'{e}')
     except Exception as e:
