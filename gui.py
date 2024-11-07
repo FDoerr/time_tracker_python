@@ -226,6 +226,11 @@ def del_task() -> None:
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
         
 
+#TODO:
+def toggle_task_done():
+    print('toggle task done')
+    ...
+
 
 def fetch_tasks(selected_project_id) -> list[dict]:    
     tasks: list[dict] = db.fetch_tasks(selected_project_id)    
@@ -382,20 +387,23 @@ total_time_label.pack(padx = 10, pady = 10)
 
 #region todo list UI Elements
 # frame for treeview & scrollbar
-task_frame = ttk.Frame(root)
+task_frame = ttk.LabelFrame(root, text='Tasks')
 task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 # task tree frame
 task_tree_frame = ttk.Frame(task_frame)
 task_tree_frame.pack(side=tk.TOP, padx=10, pady=5)
 # treeview
-task_list_tree_columns: tuple = ('ToDo: ', 'task_id')
+task_list_tree_columns: tuple = ('Done: ', 'ToDo: ', 'task_done', 'task_id')
 task_list_tree = ttk.Treeview(task_tree_frame,
                               columns    = task_list_tree_columns,
                               show       = "headings",
                               selectmode = "browse",
                               height     = 3)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
-task_list_tree['displaycolumns'] = ('ToDo: ',)
+task_list_tree.heading(column='Done: ', text='Done: ')
+task_list_tree.column('ToDo: ', width=175)
+task_list_tree.column('Done: ', width=40)
+task_list_tree['displaycolumns'] = ('Done: ', 'ToDo: ')
 # scrollbar
 task_list_scrollbar = ttk.Scrollbar(task_tree_frame,
                                     orient  = tk.VERTICAL,
@@ -406,17 +414,22 @@ task_list_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 # task button frame
 task_button_frame = ttk.Frame(task_frame)
-task_button_frame.pack(side=tk.BOTTOM, padx=0, pady=5)
+task_button_frame.pack(side=tk.BOTTOM, padx=0, pady=0)
 # add task button
 add_task_button = ttk.Button(task_button_frame,
-                             text    = 'Add Task',
+                             text    = '   Add Task   ', # TODO: stretching this button to fit the other sizes
                              command = add_task)
-add_task_button.pack(side=tk.LEFT, padx=5, pady=5)
+add_task_button.grid(column=1, row = 1, sticky=tk.NW, padx=5, pady=5)
 # delete task button
 delete_task_button = ttk.Button(task_button_frame,
                                 text    = 'Delete Task',
                                 command = del_task)
-delete_task_button.pack(side=tk.RIGHT, padx=5, pady=5)
+delete_task_button.grid(column=2, row = 1,sticky=tk.NE, padx=5, pady=5)
+# toggle task done button
+toggle_task_done_button = ttk.Button(task_button_frame,
+                                     text    = 'Toggle Done',
+                                     command = toggle_task_done)
+toggle_task_done_button.grid(column=1, row = 2, sticky=tk.S, padx=5, pady=5)
 #endregion
 
 
