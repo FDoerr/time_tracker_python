@@ -215,7 +215,7 @@ def add_task() -> None:
 def del_task() -> None:
     try:
         task_id: int | None =  get_id_from_treeview(task_list_tree)
-        if task_id == None:
+        if task_id == None: #TODO: change this to task_id is None:
             messagebox.showwarning('No Task Selected', 'Please select task')
             return
         db.del_task(task_id)
@@ -226,11 +226,37 @@ def del_task() -> None:
         messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
         
 
-#TODO:
-def toggle_task_done():
-    print('toggle task done')
-    ...
+def toggle_task_done() -> None:
+    
+    try:
+        task_id: int|None   =  get_id_from_treeview(task_list_tree) 
+        task_done: bool|None = get_task_done_from_treeview(task_list_tree)
 
+        if task_id is None or task_done is None:
+            messagebox.showwarning('No Task Selected', 'Please select task')
+            return
+                
+        db.update_task(task_id, new_task_done = not task_done)
+        update_task_and_session_display()    
+    except TypeError as e:
+        messagebox.showerror('Last Value not of expected type', f'{e}')
+    except Exception as e:
+        messagebox.showerror('Unexpected exception', f'Unexpected exception {e}')
+            
+
+def get_task_done_from_treeview(treeview) -> None | bool:
+    selected_item:str = treeview.focus()
+    if selected_item == '': # no item selected
+        return None
+
+    selected_item_dict: dict = treeview.item(selected_item)
+    values_list: list        = selected_item_dict['values']    
+    task_done: int           = values_list[-2]  
+
+    if task_done not in (0, 1):
+        raise TypeError(f'Last Value {id=} in {treeview=} not of expected type.')
+        
+    return bool(task_done)
 
 def fetch_tasks(selected_project_id) -> list[dict]:    
     tasks: list[dict] = db.fetch_tasks(selected_project_id)    
