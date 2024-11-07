@@ -402,7 +402,7 @@ task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 task_tree_frame = ttk.Frame(task_frame)
 task_tree_frame.pack(side=tk.TOP, padx=10, pady=5)
 # treeview
-task_list_tree_columns: tuple = ('Done: ', 'ToDo: ', 'task_done', 'task_id')
+task_list_tree_columns: tuple = ('Done: ', 'ToDo: ', 'task_done', 'task_id') # be carefull changing any of these, other functionality relies on position in tuple
 task_list_tree = ttk.Treeview(task_tree_frame,
                               columns    = task_list_tree_columns,
                               show       = "headings",
@@ -455,7 +455,7 @@ log_tree_column:tuple = ('Date: ',
                          'Task: ',
                          'time_spent_in_s',
                          'task_id',
-                         'session_id')
+                         'session_id') # !be carefull changing any of these, other functionality relies on position in tuple
 log_tree = ttk.Treeview(log_tree_frame,
                         columns    = log_tree_column,
                         show       = "headings",
