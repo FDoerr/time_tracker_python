@@ -10,7 +10,7 @@ from timer import Timer
 import project_handler as db
 #TODO: change to this style: https://ttkbootstrap.readthedocs.io/en/version-0.5/tutorial.html
 #TODO: editable Treeview cells: https://www.youtube.com/watch?v=n5gItcGgIkk
-
+#TODO: deal with long task descriptions and project names
 #TODO: Functionality to add:
 #     [X] add Project
 #     [X]     -> Populate projects dropdown

@@ -1,19 +1,4 @@
 '''
-
-project_handler:
-list Projects in combobox
-create new Projects via combobox
-store those projects in a file/database
-retrieve those projects on startup
-build database if nonexistent
-
-Combobox:
-focusin -> load list from databse
-return  -> save new item to database
-Button:
-save time to currently active Project via Save button
-
-
 Database:                                 
 +---------------------+           +-------------------+            
 |      projects       |           |      sessions     |            
@@ -25,6 +10,7 @@ Database:
                           |       | task_id (FK)      |----------->| task_id (PK)     |
                           |       +-------------------+            | task_description |
                           +----------------------------------------| project_id (FK)  |
+                                                                   | task_done        |
                                                                    +------------------+
 
 '''
@@ -147,6 +133,7 @@ def create_tasks_table() -> None:
                                       task_id           INTEGER PRIMARY KEY AUTOINCREMENT,
                                       project_id        INTEGER NOT NULL,
                                       task_description  TEXT,
+                                      task_done         BOOLEAN NOT NULL DEFAULT 0 CHECK (task_done IN (0, 1)),
                                       FOREIGN KEY (project_id) REFERENCES projects (project_id) ON DELETE CASCADE
                                       );
                                  '''
@@ -234,7 +221,7 @@ def add_task(project_id:int, task_description:str) -> None:
                        INSERT INTO
                        tasks(
                             project_id,
-                            task_description
+                            task_description                            
                             )
                        VALUES(?, ?);
                        '''
@@ -360,7 +347,11 @@ def update_session(session_id:      int,
     run_sql_command(cmd_update_session)
 
 
-def update_task(task_id:int, new_project_id:int|None = None , new_task_description:str|None = None) -> None:
+def update_task(task_id:int,
+                new_project_id:int|None = None,
+                new_task_description:str|None = None,
+                new_task_done:bool|None = None
+                ) -> None:
     
     building_blocks_cmd:list[str] = []
 
@@ -374,11 +365,13 @@ def update_task(task_id:int, new_project_id:int|None = None , new_task_descripti
 
     if new_task_description is not None:
         building_blocks_cmd.append(f' task_description = "{new_task_description}"')
+
+    if new_task_done is not None:        
+        building_blocks_cmd.append(f' task_done = {new_task_done}')
     
     if building_blocks_cmd == []:
        raise ValueError('At least one Optional field must be provided to update the task.')
         
-
     cmd_update_task += ','.join(building_blocks_cmd)
     cmd_update_task += f' WHERE task_id = {task_id};'    
     
@@ -411,7 +404,7 @@ if __name__=='__main__':
     # update_task(3, new_project_id = 2)
     # update_task(1, 2, 'test')    
     # update_task(2, new_task_description='test')   
-    # update_task(1)
+    # update_task(1) 
     # #del_project(1)
     # #del_session(1)
     # create_projects_table()
