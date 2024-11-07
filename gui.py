@@ -322,10 +322,10 @@ def update_session_log_display(session_logs) -> None:
         for item in task_list_tree.get_children():
 
             task_name_to_id_list: list = task_list_tree.item(item)['values']            
-            task_id_in_list:      int  = task_name_to_id_list[1]
+            task_id_in_list:      int  = task_name_to_id_list[-1]
             
             if session['task_id'] == task_id_in_list:
-                task_name = task_list_tree.item(item)['values'][0]
+                task_name = task_list_tree.item(item)['values'][1]
                 
         if task_name is None:
             task_name = 'unknown task descriptor'
@@ -450,21 +450,24 @@ log_frame.grid(row=6, column=1, padx=10, pady=10)
 log_tree_frame = ttk.Frame(log_frame)
 log_tree_frame.pack(side=tk.TOP, padx=5, pady=5)
 # treeview
-log_tree_column=  ( 'Date',
-                                                    'Duration',
-                                                    'Task',
-                                                    'time_spent_in_s',
-                                                    'task_id',
-                                                    'session_id')
+log_tree_column:tuple = ('Date: ',
+                         'Duration: ',
+                         'Task: ',
+                         'time_spent_in_s',
+                         'task_id',
+                         'session_id')
 log_tree = ttk.Treeview(log_tree_frame,
                         columns    = log_tree_column,
                         show       = "headings",
                         selectmode = tk.BROWSE,
                         height     = 4)
-log_tree.heading(column=log_tree_column[0], text=log_tree_column[0])
-log_tree.heading(column=log_tree_column[1], text=log_tree_column[1])
-log_tree.heading(column=log_tree_column[2], text=log_tree_column[2])
-log_tree['displaycolumns'] = ('Date', 'Duration', 'Task')
+log_tree.heading(column='Date: ',     text='Date: ') 
+log_tree.heading(column='Duration: ', text='Duration: ') 
+log_tree.heading(column='Task: ',     text='Task: ') 
+log_tree['displaycolumns'] = ('Date: ', 'Duration: ', 'Task: ')
+log_tree.column('Date: '    , width=140, anchor=tk.CENTER)
+log_tree.column('Duration: ', width=120, anchor=tk.CENTER)
+log_tree.column('Task: ',     width=350, anchor=tk.W)
 # scrollbar
 log_scrollbar = ttk.Scrollbar(log_tree_frame,
                               orient=tk.VERTICAL,
