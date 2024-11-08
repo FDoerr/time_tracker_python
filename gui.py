@@ -21,7 +21,7 @@ import project_handler as db
 #     [X]                         -> delete project/session
 #     [X]                               -> make logs more readable (task_id and time_spent)
 #     [ ]                                   -> change del task to tag as deleted but don't delete
-#     [ ]                                       -> mark tasks as done
+#     [X]                                       -> mark tasks as done
 
 # global variables
 timer_button_default_text: str = '⏺ start timer '
@@ -67,6 +67,7 @@ def get_id_from_treeview(treeview: ttk.Treeview) -> int | None:
 def reset() -> None:
     timer.stop()
     timer.reset()
+    update_total_time_display()
     session_time_button.config(text=timer_button_default_text)
     
     
@@ -375,7 +376,7 @@ def update_session_log_display(session_logs) -> None:
 root = tk.Tk()
 sv_ttk.use_dark_theme()
 root.title('time_tracker')
-root.geometry('675x475') #width x height
+root.geometry('675x500') #width x height
 root.minsize(width=400, height=300)
 
 
