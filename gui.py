@@ -4,12 +4,12 @@ from tkinter import simpledialog
 from tkinter import messagebox
 from datetime import datetime
 
-import sv_ttk #https://github.com/rdbende/Sun-Valley-ttk-theme
+from  ttkbootstrap import Style #https://ttkbootstrap.readthedocs.io
 
 from timer import Timer
 import project_handler as db
-#TODO: change to this style: https://ttkbootstrap.readthedocs.io/en/version-0.5/tutorial.html
-#TODO: editable Treeview cells: https://www.youtube.com/watch?v=n5gItcGgIkk
+
+
 #TODO: deal with long task descriptions and project names
 #TODO: Functionality to add:
 #     [X] add Project
@@ -20,8 +20,8 @@ import project_handler as db
 #     [X]                     -> populate logs
 #     [X]                         -> delete project/session
 #     [X]                               -> make logs more readable (task_id and time_spent)
-#     [ ]                                   -> change del task to tag as deleted but don't delete
-#     [X]                                       -> mark tasks as done
+#     [X]                                   -> mark tasks as done
+#     [ ]                                       -> change del task to tag as deleted but don't delete
 
 # global variables
 timer_button_default_text: str = '⏺ start timer '
@@ -374,10 +374,12 @@ def update_session_log_display(session_logs) -> None:
 #region GUI setup
 #window setup
 root = tk.Tk()
-sv_ttk.use_dark_theme()
 root.title('time_tracker')
 root.geometry('675x500') #width x height
 root.minsize(width=400, height=300)
+
+style = Style(theme='solar')
+style.configure('.', font=('Helvetica', 12))
 
 
 #region project UI Elements
@@ -416,8 +418,11 @@ total_time_label_name = ttk.Label(frame_total_time, text = 'Total: ')
 total_time_label_name.pack(padx = 10, pady = 10)
 
 # total_time_label
+total_time_style = Style()
+total_time_style.configure('total_time_style.TLabel',
+                           font=('helvetica', 15, 'bold'))
 total_time = tk.StringVar(value= 'dd:hh:mm:ss')
-total_time_label = ttk.Label(frame_total_time, textvariable = total_time)
+total_time_label = ttk.Label(frame_total_time, textvariable = total_time, style='total_time_style.TLabel')
 total_time_label.pack(padx = 10, pady = 10)
 #endregion
 
@@ -435,7 +440,7 @@ task_list_tree = ttk.Treeview(task_tree_frame,
                               columns    = task_list_tree_columns,
                               show       = "headings",
                               selectmode = "browse",
-                              height     = 3)
+                              height     = 4)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
 task_list_tree.heading(column='Done: ', text='✓')
 task_list_tree.column('ToDo: ', width=175)
@@ -488,7 +493,7 @@ log_tree = ttk.Treeview(log_tree_frame,
                         columns    = log_tree_column,
                         show       = "headings",
                         selectmode = tk.BROWSE,
-                        height     = 4)
+                        height     = 5)
 log_tree.heading(column='Date: ',     text='Date: ') 
 log_tree.heading(column='Duration: ', text='Duration: ') 
 log_tree.heading(column='Task: ',     text='Task: ') 
@@ -517,15 +522,23 @@ delete_session_button.pack(side=tk.BOTTOM, padx=5, pady=5)
 frame_reset_save = ttk.Frame(root)
 frame_reset_save.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
 # session_time_button
+session_time_button_style = Style()
+session_time_button_style.configure('session_time_button_style.TButton',
+                                    font=('helvetica', 15, 'bold'))
 session_time_button = ttk.Button(frame_reset_save,
+                                 style   = 'session_time_button_style.TButton',
                                  text    = timer_button_default_text,
                                  command = press_timer_button)
 session_time_button.pack(side=tk.LEFT, padx = 10, pady = 10, fill=tk.BOTH)
 # reset_button
-reset_button = ttk.Button(frame_reset_save, text = 'Reset', command = reset)
+reset_button = ttk.Button(frame_reset_save,
+                          text    = 'Reset',
+                          command = reset)
 reset_button.pack(side=tk.BOTTOM, padx = 10, pady = 10)
 # save_button
-save_button = ttk.Button(frame_reset_save, text = 'Save', command=add_session)
+save_button = ttk.Button(frame_reset_save,
+                         text = 'Save',
+                         command=add_session)
 save_button.pack(side=tk.TOP, padx = 10, pady = 10)
 #endregion
 
