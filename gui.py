@@ -209,14 +209,13 @@ def add_task() -> None:
         update_task_and_session_display()
 
         
-#TODO:  throws sql Integrity Error Foreign Key constraint failed, when deleting task that is also in session log
-#           -> ommit delete functionality?
-#           -> or mark tasks as deleted in DB and only show non deleted ones?
+#TODO: this works but throws sql Integrity Error Foreign Key constraint failed, when deleting task that is also in session log
+#           ->  mark tasks as deleted in DB and only show non deleted ones?
 #           -> delete them with trigger if no session log references them anymore?
 def del_task() -> None:
     try:
         task_id: int | None =  get_id_from_treeview(task_list_tree)
-        if task_id is None: #TODO:
+        if task_id is None: 
             messagebox.showwarning('No Task Selected', 'Please select task')
             return
         db.del_task(task_id)
@@ -360,7 +359,7 @@ def update_session_log_display(session_logs) -> None:
 
         # add to treeview
         # log_tree_column =  ('Date', 'Duration', 'Task', 'time_spent_in_s', 'task_id', 'session_id')
-        # last 3 columns not displayed
+        # only 'Date', 'Duration', 'Task' displayed
         log_tree.insert('', session['session_id'], values=(session['session_date'],
                                                            formated_time,
                                                            task_name,                                                           
@@ -435,7 +434,7 @@ task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 task_tree_frame = ttk.Frame(task_frame)
 task_tree_frame.pack(side=tk.TOP, padx=10, pady=5)
 # treeview
-task_list_tree_columns: tuple = ('Done: ', 'ToDo: ', 'task_done', 'task_id') # be carefull changing any of these, other functionality relies on position in tuple
+task_list_tree_columns: tuple = ('Done: ', 'ToDo: ', 'task_done', 'task_id') # !be carefull changing any of these, display relies  on the order of these
 task_list_tree = ttk.Treeview(task_tree_frame,
                               columns    = task_list_tree_columns,
                               show       = "headings",
@@ -488,7 +487,7 @@ log_tree_column:tuple = ('Date: ',
                          'Task: ',
                          'time_spent_in_s',
                          'task_id',
-                         'session_id') # !be carefull changing any of these, other functionality relies on position in tuple
+                         'session_id') # # !be carefull changing any of these, display relies  on the order of these
 log_tree = ttk.Treeview(log_tree_frame,
                         columns    = log_tree_column,
                         show       = "headings",
