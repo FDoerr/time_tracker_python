@@ -161,14 +161,14 @@ def update_projects_display(projects:list[dict]) -> None:
         new_project_dict[project['project_name']] = project['project_id'] # using the name as a key, is easier for finding ID
     
     project_title_combobox['values']    = list(new_project_dict.keys())
-    project_title_combobox.project_dict = new_project_dict #"reverse" dict for referencing id from name
+    project_title_combobox.project_dict = new_project_dict # "reverse" dict for referencing id from name
 
 
 def select_last_project_in_dropdown() -> None:
     click_projects_combobox() # to refresh combobox values
     projects = project_title_combobox['values']   
     
-    if projects != '': #prevent index error when only one project exists and gets deleted
+    if projects != '': # prevent index error when only one project exists and gets deleted
         project_title_combobox.set(projects[-1])
 
 
@@ -458,16 +458,19 @@ task_button_frame = ttk.Frame(task_frame)
 task_button_frame.pack(side=tk.BOTTOM, padx=0, pady=0)
 # add task button
 add_task_button = ttk.Button(task_button_frame,
-                             text    = '   Add Task   ', # TODO: stretching this button to fit the other sizes
+                             width   = 10,
+                             text    = 'Add Task',                              
                              command = add_task)
 add_task_button.grid(column=1, row = 1, sticky=tk.NW, padx=5, pady=5)
 # delete task button
 delete_task_button = ttk.Button(task_button_frame,
+                                width   = 10,
                                 text    = 'Delete Task',
                                 command = del_task)
 delete_task_button.grid(column=2, row = 1,sticky=tk.NE, padx=5, pady=5)
 # toggle task done button
 toggle_task_done_button = ttk.Button(task_button_frame,
+                                     width   = 10,
                                      text    = 'Toggle Done',
                                      command = toggle_task_done)
 toggle_task_done_button.grid(column=1, row = 2, sticky=tk.S, padx=5, pady=5)
@@ -526,6 +529,7 @@ session_time_button_style.configure('session_time_button_style.TButton',
                                     font=('helvetica', 15, 'bold'))
 session_time_button = ttk.Button(frame_reset_save,
                                  style   = 'session_time_button_style.TButton',
+                                 width   = 12,                                 
                                  text    = timer_button_default_text,
                                  command = press_timer_button)
 session_time_button.pack(side=tk.LEFT, padx = 10, pady = 10, fill=tk.BOTH)
@@ -536,8 +540,8 @@ reset_button = ttk.Button(frame_reset_save,
 reset_button.pack(side=tk.BOTTOM, padx = 10, pady = 10)
 # save_button
 save_button = ttk.Button(frame_reset_save,
-                         text = 'Save',
-                         command=add_session)
+                         text    = 'Save',
+                         command = add_session)
 save_button.pack(side=tk.TOP, padx = 10, pady = 10)
 #endregion
 
