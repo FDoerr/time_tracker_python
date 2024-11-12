@@ -394,36 +394,4 @@ def update_task_description(task_id:int, new_task_description:str) -> None:
 #region if __name__=='__main__':
 if __name__=='__main__':
     print(f'Runs directly: {__file__}!')
-    # print(fetch_projects())
-    # print(fetch_sessions(1))
-    # print(fetch_tasks(1))
-    # update_project('Project_name changed', 1)
-    # update_task(1, 1)
-    # update_session(2, 2, 'new date', 666, 1)
-    # update_session(1, new_task_id=5)  
-    # update_task(3, new_project_id = 2)
-    # update_task(1, 2, 'test')    
-    # update_task(2, new_task_description='test')   
-    # update_task(1) 
-    # #del_project(1)
-    # #del_session(1)
-    # create_projects_table()
-    # create_sessions_table()
-    # create_tasks_table()
-    # create_trigger_check_project_id_on_session_insert()
-    # create_trigger_check_project_id_on_session_update()
-    # add_project('Projekt 1')
-    # add_project('Projekt 2')
-    # add_project('Projekt 3')
-    # add_task(1, 'Task 1')
-    # add_task(1, 'Task 2')
-    # add_task(2, 'Task 3')
-    # add_task(2, 'Task 4')
-    # add_task(3, 'Task 5')
-    # #add_task(4, 'Task 6') ging nicht weil project 4 nicht exisitert 
-    # add_session(1, str(datetime.now()), 1000, None)
-    # add_session(1, str(datetime.now()), 2000, 1)
-    # add_session(1, str(datetime.now()), 3000, 3) # geht nicht mehr weil sessions.project_id = 1 und tasks.project_id = 2
-    # add_session(2, str(datetime.now()), 4000, 3)
-    # #add_session(1, str(datetime.now()), 5000, 10) # ging nicht weil taks_id = 10 nicht exisitert
-    # #add_session(10, str(datetime.now()), 5000, 1) # ging nicht weil project_id = 10 nicht existiert
+    
