@@ -374,23 +374,25 @@ def update_session_log_display(session_logs) -> None:
 #window setup
 root = tk.Tk()
 root.title('time_tracker')
-root.geometry('675x500') #width x height
-root.minsize(width=400, height=300)
+root.geometry('745x600') # width x height
+root.resizable(width=False, height=False)
 
 style = Style(theme='solar')
 style.configure('.', font=('Helvetica', 12))
 
-
+top_frame = tk.Frame(root)
 #region project UI Elements
+#TODO: change fontsize of dropdown
 #project display frame
-project_display_frame = ttk.Frame(root)
+project_display_frame = ttk.Frame(top_frame)
 # project_title_combobox
-project_name = tk.StringVar(value= 'Project name')
+project_name = tk.StringVar(value='Project name')
 project_title_combobox = ttk.Combobox(project_display_frame,
                                       textvariable = project_name,
                                       state        = 'readonly',
                                       height       = 5,
-                                      postcommand  = click_projects_combobox)
+                                      postcommand  = click_projects_combobox,
+                                      font         = ('Helvetica', 16, 'bold'))
 project_title_combobox.bind('<<ComboboxSelected>>', click_update_task_and_session_display)
 project_title_combobox.project_dict = dict() #adds project_dict attribute for future reference
 # add project button
@@ -405,17 +407,42 @@ delete_project_button = ttk.Button(project_display_frame,
 #endregion
 
 
+#region Timer Button UI Elements
+# reset & save frame
+frame_reset_save = ttk.Frame(top_frame)
+# session_time_button
+session_time_button_style = Style()
+session_time_button_style.configure('session_time_button_style.TButton',
+                                    font=('helvetica', 15, 'bold'))
+session_time_button = ttk.Button(frame_reset_save,
+                                 style   = 'session_time_button_style.TButton',
+                                 width   = 12,                                 
+                                 text    = timer_button_default_text,
+                                 command = press_timer_button)
+# reset_button
+reset_button = ttk.Button(frame_reset_save,
+                          text    = 'Reset',
+                          command = reset)
+# save_button
+save_button = ttk.Button(frame_reset_save,
+                         text    = 'Save',
+                         command = add_session)
+
+#endregion
+
+
 #region total time label UI Elements
 # subframe to group total time labels
-frame_total_time =ttk.Frame(root)
+frame_total_time =ttk.Frame(top_frame)
 # total_time_label_name
-total_time_label_name = ttk.Label(frame_total_time, text = 'Total: ')
+total_time_label_name = ttk.Label(frame_total_time, width=20, text = 'Total: ')
 # total_time_label
 total_time_style = Style()
 total_time_style.configure('total_time_style.TLabel',
                            font=('helvetica', 15, 'bold'))
-total_time = tk.StringVar(value= 'dd:hh:mm:ss')
+total_time = tk.StringVar(value= 'hh:mm:ss')
 total_time_label = ttk.Label(frame_total_time,
+                             width        = 20,
                              textvariable = total_time,
                              style        = 'total_time_style.TLabel')
 #endregion
@@ -435,7 +462,7 @@ task_list_tree = ttk.Treeview(task_tree_frame,
                               height     = 4)
 task_list_tree.heading(column='ToDo: ', text='ToDo: ')
 task_list_tree.heading(column='Done: ', text='✓')
-task_list_tree.column('ToDo: ', width=175)
+task_list_tree.column('ToDo: ', width=650)
 task_list_tree.column('Done: ', width=35, anchor=tk.CENTER)
 task_list_tree['displaycolumns'] = ('Done: ', 'ToDo: ')
 # scrollbar
@@ -487,7 +514,7 @@ log_tree.heading(column='Task: ',     text='Task: ')
 log_tree['displaycolumns'] = ('Date: ', 'Duration: ', 'Task: ')
 log_tree.column('Date: '    , width=140, anchor=tk.CENTER)
 log_tree.column('Duration: ', width=120, anchor=tk.CENTER)
-log_tree.column('Task: ',     width=350, anchor=tk.W)
+log_tree.column('Task: ',     width=425, anchor=tk.W)
 # scrollbar
 log_scrollbar = ttk.Scrollbar(log_tree_frame,
                               orient=tk.VERTICAL,
@@ -501,38 +528,23 @@ delete_session_button = ttk.Button(log_frame,
 #endregion
 
 
-#region Timer Button UI Elements
-# reset & save frame
-frame_reset_save = ttk.Frame(root)
-# session_time_button
-session_time_button_style = Style()
-session_time_button_style.configure('session_time_button_style.TButton',
-                                    font=('helvetica', 15, 'bold'))
-session_time_button = ttk.Button(frame_reset_save,
-                                 style   = 'session_time_button_style.TButton',
-                                 width   = 12,                                 
-                                 text    = timer_button_default_text,
-                                 command = press_timer_button)
-# reset_button
-reset_button = ttk.Button(frame_reset_save,
-                          text    = 'Reset',
-                          command = reset)
-# save_button
-save_button = ttk.Button(frame_reset_save,
-                         text    = 'Save',
-                         command = add_session)
-
-#endregion
-
 #region placing GUI elements
+top_frame.grid(row=1, column=1, padx=10, pady=10)
 # project_display_frame
-project_display_frame.grid(row=1, column=1, padx=10, pady=10, sticky=tk.NW)
-project_title_combobox.pack(side=tk.LEFT, padx=10)
-add_project_button.pack(    side=tk.LEFT, padx=10)
-delete_project_button.pack( side=tk.LEFT, padx=10)
+project_display_frame.grid( row=1, column=1, padx=10, pady=10, sticky=tk.NW)
+# Parent: project_display_frame
+project_title_combobox.pack(side=tk.TOP,   padx=10, pady=10, fill=tk.X) 
+add_project_button.pack(    side=tk.LEFT,  padx=10, pady=10)
+delete_project_button.pack( side=tk.RIGHT, padx=10, pady=10)
+
+# reset & save frame
+frame_reset_save.grid(row=1, column=2, padx=10, pady=10, sticky=tk.E)
+session_time_button.pack(side=tk.LEFT,   padx=10, pady=10, fill=tk.BOTH)
+reset_button.pack(       side=tk.BOTTOM, padx=10, pady=10)
+save_button.pack(        side=tk.TOP,    padx=10, pady=10)
 
 # frame_total_time
-frame_total_time.grid(row=2, column=1, padx=50, pady=10, sticky=tk.EW)
+frame_total_time.grid(row=1, column=3, padx=10, pady=10)
 total_time_label_name.pack(padx=10, pady=10)
 total_time_label.pack(     padx=10, pady=10)
 
@@ -540,25 +552,21 @@ total_time_label.pack(     padx=10, pady=10)
 task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 task_tree_frame.pack(side=tk.TOP, padx=10, pady=5) # parent: task_frame
 # Place  treeview and scrollbar
-task_list_tree.pack(     side=tk.LEFT, fill=tk.BOTH, expand=True)
+task_list_tree.pack(     side=tk.LEFT,  fill=tk.BOTH, expand=True)
 task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 # task button frame
-task_button_frame.pack(side=tk.BOTTOM, padx=0, pady=0) 
+task_button_frame.pack(side=tk.BOTTOM, padx=5, pady=10, anchor=tk.W) 
 add_task_button.grid(        column=1, row=1, sticky=tk.NW, padx=5, pady=5)
 delete_task_button.grid(     column=2, row=1, sticky=tk.NE, padx=5, pady=5)
 toggle_task_done_button.grid(column=1, row=2, sticky=tk.S,  padx=5, pady=5)
 
 # frame log tree
-log_frame.grid(row=6, column=1, padx=10, pady=10)
-log_tree_frame.pack(side=tk.TOP, padx=5, pady=5) # parent: log_frame
+log_frame.grid(row=3, column=1, padx=10, pady=10,  sticky=tk.W)
+log_tree_frame.pack(side=tk.TOP, padx=10, pady=10) # parent: log_frame
 # Place  treeview and scrollbar
 log_tree.pack(             side=tk.LEFT,  fill=tk.BOTH, expand=True)
 log_scrollbar.pack(        side=tk.RIGHT, fill=tk.Y)
-delete_session_button.pack(side=tk.BOTTOM, padx=5, pady=5)
+delete_session_button.pack(side=tk.BOTTOM, padx=10, pady=5, anchor=tk.W)
 
-# reset & save frame
-frame_reset_save.grid(row=2, column=1, padx=10, pady=10, sticky=tk.E)
-session_time_button.pack(side=tk.LEFT,   padx = 10, pady = 10, fill=tk.BOTH)
-reset_button.pack(       side=tk.BOTTOM, padx = 10, pady = 10)
-save_button.pack(        side=tk.TOP,    padx = 10, pady = 10)
+
 #endregion GUI setup
