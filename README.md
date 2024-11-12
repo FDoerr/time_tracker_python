@@ -4,7 +4,7 @@ Ein einfaches Programm um Arbeitszeit Projekten und Aufgaben zuzuweisen.
 
 Die Datenbank wurde mit SQLite realisiert.
 
-![Screenshot](docs/gui_screenshot.png, width="300")
+![Screenshot](docs/gui_screenshot.png)
 
 
 # Dinge die ich gelernt habe:
