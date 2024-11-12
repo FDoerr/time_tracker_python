@@ -1,7 +1,9 @@
 # time_tracker_python
 Ein einfaches Programm um Arbeitszeit Projekten und Aufgaben zuzuweisen.
+
 Die Datenbank wurde mit SQLite realisiert.
-![Screenshot](docs/gui_screenshot.png)
+
+![Screenshot](docs/gui_screenshot.png, width="300")
 
 
 # Dinge die ich gelernt habe:
