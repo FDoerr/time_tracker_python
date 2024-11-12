@@ -15,7 +15,7 @@ Database:
 
 '''
 #TODO: Refactor everything to use f-strings for better readability, this also means run_sql_command/query won't need the data tuples anymore
-#TODO: modularize this Script
+#TODO: refactor this to OOP and modularize into smaller scripts
 import sqlite3 as sql3
 
 default_db:str = 'time_tracker_data.db'
