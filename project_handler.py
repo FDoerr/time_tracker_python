@@ -393,7 +393,7 @@ def update_task_description(task_id:int, new_task_description:str) -> None:
 
 #region if __name__=='__main__':
 if __name__=='__main__':
-    print(f'Runs directly: {__file__}')
+    print(f'Runs directly: {__file__}!')
     # print(fetch_projects())
     # print(fetch_sessions(1))
     # print(fetch_tasks(1))

@@ -512,13 +512,13 @@ log_tree.heading(column='Date: ',     text='Date: ')
 log_tree.heading(column='Duration: ', text='Duration: ') 
 log_tree.heading(column='Task: ',     text='Task: ') 
 log_tree['displaycolumns'] = ('Date: ', 'Duration: ', 'Task: ')
-log_tree.column('Date: '    , width=140, anchor=tk.CENTER)
-log_tree.column('Duration: ', width=120, anchor=tk.CENTER)
-log_tree.column('Task: ',     width=425, anchor=tk.W)
+log_tree.column('Date: '    , width = 140, anchor = tk.CENTER)
+log_tree.column('Duration: ', width = 120, anchor = tk.CENTER)
+log_tree.column('Task: ',     width = 425, anchor = tk.W)
 # scrollbar
 log_scrollbar = ttk.Scrollbar(log_tree_frame,
-                              orient=tk.VERTICAL,
-                              command=log_tree.yview)
+                              orient  = tk.VERTICAL,
+                              command = log_tree.yview)
 log_tree.configure(yscrollcommand=log_scrollbar.set)
 #delete session button
 delete_session_button = ttk.Button(log_frame,
@@ -603,3 +603,6 @@ def place_elements_in_log_tree_frame():
 #endregion
 
 #endregion GUI setup
+
+if __name__=='__main__':
+    print(f'Runs directly: {__file__}!')
