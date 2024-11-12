@@ -532,11 +532,11 @@ delete_session_button = ttk.Button(log_frame,
 
 #region placing GUI elements
 #region top frame
-def place_top_frame():
+def place_top_frame() -> None:
     top_frame.grid(row=1, column=1, padx=10, pady=10)
 
 
-def place_elements_in_top_frame():
+def place_elements_in_top_frame() -> None:
     project_display_frame.grid( row=1, column=1, padx=10, pady=10, sticky=tk.NW)
     place_elements_in_project_display_frame()
 
@@ -547,30 +547,30 @@ def place_elements_in_top_frame():
     place_elements_in_total_time_frame()
 
 
-def place_elements_in_project_display_frame():
+def place_elements_in_project_display_frame() -> None:
         project_title_combobox.pack(side=tk.TOP,   padx=10, pady=10, fill=tk.X) 
         add_project_button.pack(    side=tk.LEFT,  padx=10, pady=10)
         delete_project_button.pack( side=tk.RIGHT, padx=10, pady=10)
 
 
-def place_elements_in_reset_save_frame():
+def place_elements_in_reset_save_frame() -> None:
         session_time_button.pack(side=tk.LEFT,   padx=10, pady=10, fill=tk.BOTH)
         reset_button.pack(       side=tk.BOTTOM, padx=10, pady=10)
         save_button.pack(        side=tk.TOP,    padx=10, pady=10)
 
 
-def place_elements_in_total_time_frame():
+def place_elements_in_total_time_frame() -> None:
         total_time_label_name.pack(padx=10, pady=10)
         total_time_label.pack(     padx=10, pady=10)
 #endregion
 
 
 #region middle frame
-def place_middle_frame():
+def place_middle_frame() -> None:
     task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 
 
-def place_elements_in_middle_frame():
+def place_elements_in_middle_frame() -> None:
     task_tree_frame.pack(side=tk.TOP, padx=10, pady=5) 
     place_elements_in_task_tree_frame()
 
@@ -578,11 +578,11 @@ def place_elements_in_middle_frame():
     place_elements_in_task_button_frame()
 
 
-def place_elements_in_task_tree_frame():
+def place_elements_in_task_tree_frame() -> None:
         task_list_tree.pack(     side=tk.LEFT,  fill=tk.BOTH, expand=True)
         task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-def place_elements_in_task_button_frame():
+def place_elements_in_task_button_frame() -> None:
         add_task_button.grid(        column=1, row=1, sticky=tk.NW, padx=5, pady=5)
         delete_task_button.grid(     column=2, row=1, sticky=tk.NE, padx=5, pady=5)
         toggle_task_done_button.grid(column=1, row=2, sticky=tk.S,  padx=5, pady=5)
@@ -590,15 +590,15 @@ def place_elements_in_task_button_frame():
 
 
 #region bottom frame
-def place_bottom_frame():
+def place_bottom_frame() -> None:
     log_frame.grid(row=3, column=1, padx=10, pady=10,  sticky=tk.W)
 
 
-def place_elements_in_bottom_frame():
+def place_elements_in_bottom_frame() -> None:
     log_tree_frame.pack(side=tk.TOP, padx=10, pady=10) 
     place_elements_in_log_tree_frame()
 
-def place_elements_in_log_tree_frame():            
+def place_elements_in_log_tree_frame() -> None:            
         log_tree.pack(             side=tk.LEFT,  fill=tk.BOTH, expand=True)
         log_scrollbar.pack(        side=tk.RIGHT, fill=tk.Y)
         delete_session_button.pack(side=tk.BOTTOM, padx=10, pady=5, anchor=tk.W)
