@@ -502,7 +502,7 @@ log_tree_column:tuple = ('Date: ',
                          'Task: ',
                          'time_spent_in_s',
                          'task_id',
-                         'session_id') # # !be carefull changing any of these, display relies  on the order of these
+                         'session_id') # !be carefull changing any of these, display relies  on the order of these
 log_tree = ttk.Treeview(log_tree_frame,
                         columns    = log_tree_column,
                         show       = "headings",
@@ -529,44 +529,77 @@ delete_session_button = ttk.Button(log_frame,
 
 
 #region placing GUI elements
-top_frame.grid(row=1, column=1, padx=10, pady=10)
-# project_display_frame
-project_display_frame.grid( row=1, column=1, padx=10, pady=10, sticky=tk.NW)
-# Parent: project_display_frame
-project_title_combobox.pack(side=tk.TOP,   padx=10, pady=10, fill=tk.X) 
-add_project_button.pack(    side=tk.LEFT,  padx=10, pady=10)
-delete_project_button.pack( side=tk.RIGHT, padx=10, pady=10)
+#region top frame
+def place_top_frame():
+    top_frame.grid(row=1, column=1, padx=10, pady=10)
 
-# reset & save frame
-frame_reset_save.grid(row=1, column=2, padx=10, pady=10, sticky=tk.E)
-session_time_button.pack(side=tk.LEFT,   padx=10, pady=10, fill=tk.BOTH)
-reset_button.pack(       side=tk.BOTTOM, padx=10, pady=10)
-save_button.pack(        side=tk.TOP,    padx=10, pady=10)
 
-# frame_total_time
-frame_total_time.grid(row=1, column=3, padx=10, pady=10)
-total_time_label_name.pack(padx=10, pady=10)
-total_time_label.pack(     padx=10, pady=10)
+def place_elements_in_top_frame():
+    project_display_frame.grid( row=1, column=1, padx=10, pady=10, sticky=tk.NW)
+    place_elements_in_project_display_frame()
 
-# frame task tree
-task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
-task_tree_frame.pack(side=tk.TOP, padx=10, pady=5) # parent: task_frame
-# Place  treeview and scrollbar
-task_list_tree.pack(     side=tk.LEFT,  fill=tk.BOTH, expand=True)
-task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-# task button frame
-task_button_frame.pack(side=tk.BOTTOM, padx=5, pady=10, anchor=tk.W) 
-add_task_button.grid(        column=1, row=1, sticky=tk.NW, padx=5, pady=5)
-delete_task_button.grid(     column=2, row=1, sticky=tk.NE, padx=5, pady=5)
-toggle_task_done_button.grid(column=1, row=2, sticky=tk.S,  padx=5, pady=5)
+    frame_reset_save.grid(row=1, column=2, padx=10, pady=10, sticky=tk.E)
+    place_elements_in_reset_save_frame()
 
-# frame log tree
-log_frame.grid(row=3, column=1, padx=10, pady=10,  sticky=tk.W)
-log_tree_frame.pack(side=tk.TOP, padx=10, pady=10) # parent: log_frame
-# Place  treeview and scrollbar
-log_tree.pack(             side=tk.LEFT,  fill=tk.BOTH, expand=True)
-log_scrollbar.pack(        side=tk.RIGHT, fill=tk.Y)
-delete_session_button.pack(side=tk.BOTTOM, padx=10, pady=5, anchor=tk.W)
+    frame_total_time.grid(row=1, column=3, padx=10, pady=10)
+    place_elements_in_total_time_frame()
 
+
+def place_elements_in_project_display_frame():
+        project_title_combobox.pack(side=tk.TOP,   padx=10, pady=10, fill=tk.X) 
+        add_project_button.pack(    side=tk.LEFT,  padx=10, pady=10)
+        delete_project_button.pack( side=tk.RIGHT, padx=10, pady=10)
+
+
+def place_elements_in_reset_save_frame():
+        session_time_button.pack(side=tk.LEFT,   padx=10, pady=10, fill=tk.BOTH)
+        reset_button.pack(       side=tk.BOTTOM, padx=10, pady=10)
+        save_button.pack(        side=tk.TOP,    padx=10, pady=10)
+
+
+def place_elements_in_total_time_frame():
+        total_time_label_name.pack(padx=10, pady=10)
+        total_time_label.pack(     padx=10, pady=10)
+#endregion
+
+
+#region middle frame
+def place_middle_frame():
+    task_frame.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
+
+
+def place_elements_in_middle_frame():
+    task_tree_frame.pack(side=tk.TOP, padx=10, pady=5) 
+    place_elements_in_task_tree_frame()
+
+    task_button_frame.pack(side=tk.BOTTOM, padx=5, pady=10, anchor=tk.W) 
+    place_elements_in_task_button_frame()
+
+
+def place_elements_in_task_tree_frame():
+        task_list_tree.pack(     side=tk.LEFT,  fill=tk.BOTH, expand=True)
+        task_list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+def place_elements_in_task_button_frame():
+        add_task_button.grid(        column=1, row=1, sticky=tk.NW, padx=5, pady=5)
+        delete_task_button.grid(     column=2, row=1, sticky=tk.NE, padx=5, pady=5)
+        toggle_task_done_button.grid(column=1, row=2, sticky=tk.S,  padx=5, pady=5)
+#endregion
+
+
+#region bottom frame
+def place_bottom_frame():
+    log_frame.grid(row=3, column=1, padx=10, pady=10,  sticky=tk.W)
+
+
+def place_elements_in_bottom_frame():
+    log_tree_frame.pack(side=tk.TOP, padx=10, pady=10) 
+    place_elements_in_log_tree_frame()
+
+def place_elements_in_log_tree_frame():            
+        log_tree.pack(             side=tk.LEFT,  fill=tk.BOTH, expand=True)
+        log_scrollbar.pack(        side=tk.RIGHT, fill=tk.Y)
+        delete_session_button.pack(side=tk.BOTTOM, padx=10, pady=5, anchor=tk.W)
+#endregion
 
 #endregion GUI setup
