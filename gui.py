@@ -9,7 +9,7 @@ from  ttkbootstrap import Style #https://ttkbootstrap.readthedocs.io
 from timer import Timer
 import project_handler as db
 
-
+#TODO: refactor this to OOP and modularize into smaller scripts
 #TODO: deal with long task descriptions and project names
 #TODO: Functionality to add:
 #     [X] add Project
@@ -87,10 +87,12 @@ def update_timer_display() -> None:
     elapsed_time: int = timer.get_elapsed_time()        
     hours, minutes, seconds  = calculate_hours_minutes_seconds(elapsed_time)
     formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"
+    
 
     # toggle displayed symbol ⏺ ⏵⏸ ⏯ 
     if timer.running:
         session_time_button.config(text=f"⏸ {formated_time}")
+        root.title(f'{formated_time} | time_tracker')
         root.after(timer_display_delay_in_ms, update_timer_display) #call function after 100ms, keeps UI Responsive
     else:
        session_time_button.config(text=f"⏵ {formated_time}") 
@@ -373,7 +375,7 @@ def update_session_log_display(session_logs) -> None:
 #region GUI setup
 #window setup
 root = tk.Tk()
-root.title('time_tracker')
+root.title(f'00:00:00 | time_tracker')
 root.geometry('745x600') # width x height
 root.resizable(width=False, height=False)
 
