@@ -462,10 +462,10 @@ task_list_tree = ttk.Treeview(task_tree_frame,
                               show       = "headings",
                               selectmode = "browse",
                               height     = 4)
-task_list_tree.heading(column='ToDo: ', text='ToDo: ')
-task_list_tree.heading(column='Done: ', text='✓')
+task_list_tree.heading(column='ToDo: ', text='ToDo: ', anchor=tk.W)
+task_list_tree.heading(column='Done: ', text='✓',      anchor=tk.CENTER)
 task_list_tree.column('ToDo: ', width=650)
-task_list_tree.column('Done: ', width=35, anchor=tk.CENTER)
+task_list_tree.column('Done: ', width=35, )
 task_list_tree['displaycolumns'] = ('Done: ', 'ToDo: ')
 # scrollbar
 task_list_scrollbar = ttk.Scrollbar(task_tree_frame,
@@ -510,13 +510,13 @@ log_tree = ttk.Treeview(log_tree_frame,
                         show       = "headings",
                         selectmode = tk.BROWSE,
                         height     = 5)
-log_tree.heading(column='Date: ',     text='Date: ') 
-log_tree.heading(column='Duration: ', text='Duration: ') 
-log_tree.heading(column='Task: ',     text='Task: ') 
+log_tree.heading(column='Date: ',     text='Date: ',     anchor = tk.W) 
+log_tree.heading(column='Duration: ', text='Duration: ', anchor = tk.W) 
+log_tree.heading(column='Task: ',     text='Task: ',     anchor=tk.W) 
 log_tree['displaycolumns'] = ('Date: ', 'Duration: ', 'Task: ')
-log_tree.column('Date: '    , width = 140, anchor = tk.CENTER)
-log_tree.column('Duration: ', width = 120, anchor = tk.CENTER)
-log_tree.column('Task: ',     width = 425, anchor = tk.W)
+log_tree.column('Date: '    , width = 140)
+log_tree.column('Duration: ', width = 120)
+log_tree.column('Task: ',     width = 425)
 # scrollbar
 log_scrollbar = ttk.Scrollbar(log_tree_frame,
                               orient  = tk.VERTICAL,
