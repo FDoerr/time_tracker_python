@@ -24,7 +24,7 @@ import project_handler as db
 #     [ ]                                       -> change del task to tag as deleted but don't delete
 
 # global variables
-timer_button_default_text: str = '⏺ start timer '
+timer_button_default_text: str = '⏺ Start Timer '
 timer_display_delay_in_ms: int = 50
 
 
@@ -400,7 +400,7 @@ add_project_button = ttk.Button(project_display_frame,
                                 command = add_project)
 # delete project button
 delete_project_button = ttk.Button(project_display_frame,
-                                   text    = 'delete Project',
+                                   text    = 'Delete Project',
                                    command = del_project)
 
 #endregion
