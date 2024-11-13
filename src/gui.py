@@ -492,7 +492,7 @@ toggle_task_done_button = ttk.Button(task_button_frame,
 
 #region session log UI Elements
 # frame for treeview & scrollbar
-log_frame = ttk.Labelframe(root, text='logs')
+log_frame = ttk.Labelframe(root, text='Sessions: ')
 # log tree & scrollbar frame
 log_tree_frame = ttk.Frame(log_frame)
 # treeview
