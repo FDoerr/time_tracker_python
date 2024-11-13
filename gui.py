@@ -79,15 +79,13 @@ def press_timer_button() -> None:
         update_timer_display()
 
 
-def update_timer_display() -> None:
-        
+def update_timer_display() -> None:        
     if timer.was_reset: #prevents timer_display from updating to 00:00:00 when reset while running
         return
     
-    elapsed_time: int = timer.get_elapsed_time()        
+    elapsed_time: int        = timer.get_elapsed_time()        
     hours, minutes, seconds  = calculate_hours_minutes_seconds(elapsed_time)
-    formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"
-    
+    formated_time: str       = f"{hours:02}:{minutes:02}:{seconds:02}"    
 
     # toggle displayed symbol ⏺ ⏵⏸ ⏯ 
     if timer.running:
@@ -101,13 +99,12 @@ def update_timer_display() -> None:
 
 
 def update_total_time_display() -> None:
-
     elapsed_time: int = timer.get_elapsed_time()
     for item in log_tree.get_children():
         elapsed_time += int(log_tree.item(item)['values'][-3])
 
-    hours, minutes, seconds  = calculate_hours_minutes_seconds(elapsed_time)
-    formated_time:str = f"{hours:02}:{minutes:02}:{seconds:02}"    
+    hours, minutes, seconds = calculate_hours_minutes_seconds(elapsed_time)
+    formated_time:str       = f"{hours:02}:{minutes:02}:{seconds:02}"    
 
     total_time.set(formated_time)  
 
