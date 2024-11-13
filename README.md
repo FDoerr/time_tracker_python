@@ -27,3 +27,11 @@ Die Datenbank wurde mit SQLite realisiert.
 - Modularisierung & OOP: project_handler.py
 - Import/Export Funktionalität
 - Validation der Zeichenkettelänge von Projektnamen und Taskbeschreibungen
+
+
+# Requirements | Bibliotheken:
+Die genutzten Bibliotheken sind in `requirements.txt` hinterlegt.
+
+Installation mit pip:
+
+`pip install -r requirements.txt`
