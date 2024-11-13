@@ -2,7 +2,9 @@
 Ein einfaches Programm, um Projekten Arbeitszeit und Aufgaben zuzuweisen.
 
 Die Datenbank wurde mit SQLite realisiert.
-Die graphische Benutzeroberfläche mit Tkinter.
+
+Die graphische Benutzeroberfläche wurde mit Tkinter realisiert.
+
 
 ![Screenshot](gui_screenshot.png)
 
@@ -27,9 +29,13 @@ Die graphische Benutzeroberfläche mit Tkinter.
 
 # Fazit:
 Das Programm funktioniert so, wie ich es mir vorgestellt habe, aber in Bezug auf Wartbarkeit gibt es Verbesserungspotenzial.
+
 Der Code enthält einige unvorteilhafte Strukturen, die es erschweren, effizient zu refaktorisieren – besonders in den Bereichen OOP und Modularisierung.
+
 Die Projektkomplexität hat sich umfangreicher entwickelt, als ursprünglich erwartet.
+
 Die verbleibenden ToDos könnten noch umgesetzt werden, jedoch würde ich bei künftigen Projekten von einem modulareren Ansatz und einer sorgfältigeren Planungsphase profitieren
+
 
 Ich erwarte das ich mit **mehreren kleinen Projekten mehr lernen werde**, um dann mein Wissen bei komplexeren Projekten anwenden zu können.
 
