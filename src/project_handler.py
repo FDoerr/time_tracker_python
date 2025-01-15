@@ -14,7 +14,7 @@ Database:
                                                                    +------------------+
 
 '''
-#TODO: Refactor everything to use f-strings for better readability, this also means run_sql_command/query won't need the data tuples anymore
+#TODO: Refactor update_task to not use f-strings anymore, they pose a security risk
 #TODO: refactor this to OOP and modularize into smaller scripts
 import sqlite3 as sql3
 
